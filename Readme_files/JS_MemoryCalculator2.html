@@ -189,6 +189,10 @@ item, else you would have to move the comments (starting from the area that you'
 			let Table_HeaderRow = document.createElement("tr")
 			Table.appendChild(Table_HeaderRow)
 			
+			let Td_EmptyCellForGroupColumn = document.createElement("td")
+			Td_EmptyCellForGroupColumn.setAttribute("rowspan", "2")
+			Table_HeaderRow.appendChild(Td_EmptyCellForGroupColumn)
+			
 			let Table_Header_RAMAddresses = document.createElement("th")
 			Table_Header_RAMAddresses.appendChild(document.createTextNode("RAM address"))
 			Table_Header_RAMAddresses.setAttribute("colspan", "2")
@@ -220,19 +224,21 @@ item, else you would have to move the comments (starting from the area that you'
 			
 			Table.appendChild(Table_HeaderRow2_Subtype)
 			
+			
 			let LMCM16Address = BigInt("0x7FC060")
 			for (let i=0n; i < NumberOfBytesOfMemoryFlagRAM; i++) {
-				if (i % 16n == 0n) {
-					let Group128SeperatorRow = document.createElement("tr")
-					
-					let Group128SeperatorTh = document.createElement("th")
-					Group128SeperatorTh.setAttribute("colspan", "10")
-					Group128SeperatorTh.appendChild(document.createTextNode("Group $" + (i/16n).toString(16).toUpperCase()))
-					Group128SeperatorRow.appendChild(Group128SeperatorTh)
-					
-					Table.appendChild(Group128SeperatorRow)
-				}
 				let TableRow = document.createElement("tr")
+				if (i % 16n == 0n) {
+					let GroupNumber = i/16n
+					let FlagStartingNumber = i*8n
+					let FlagEndingNumber = FlagStartingNumber + 127n
+					let Group128SeperatorTh = document.createElement("th")
+					Group128SeperatorTh.style.whiteSpace = "pre"
+					Group128SeperatorTh.setAttribute("rowspan", "16")
+					Group128SeperatorTh.appendChild(document.createTextNode("Group $" + GroupNumber.toString(16).toUpperCase() + "\nFlags $" + FlagStartingNumber.toString(16).padStart(3, "0").toUpperCase() + "~$" + FlagEndingNumber.toString(16).padStart(3, "0").toUpperCase()))
+					
+					TableRow.appendChild(Group128SeperatorTh)
+				}
 				let TableData_MemoryFlagRam = document.createElement("td")
 				TableData_MemoryFlagRam.style.fontFamily = "monospace"
 				TableData_MemoryFlagRam.appendChild(document.createTextNode("$" + (Value_Freeram_MemoryFlagRAM+i).toString(16).padStart(6, "0").toUpperCase() + " (Addr+" + i.toString(10) +"/$" + i.toString(16).toUpperCase() + ")"))
