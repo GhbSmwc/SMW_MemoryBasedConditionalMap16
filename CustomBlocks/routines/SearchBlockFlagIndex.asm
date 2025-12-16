@@ -602,6 +602,9 @@ function GetC800IndexVertiLvl(XPos, YPos) = (512*(YPos/16))+(256*(XPos/16))+((YP
 ; take the <YPos_in_hex> and add 1 AND THEN multiply by $10 (or just add a zero at the end;
 ; example: ($1A + 1)*$10 = $1B0)
 ;-$XXXX and $YYYY are the block coordinates, in units of 16x16 blocks (not pixels).
+;
+;Technically, these are C800 block indexes, not XY positions. Reason why it stores data as indexes
+;is so that it consumes less space with each entry occupies 2 bytes of memory, instead of 4.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ?GetFlagNumberC800IndexStart:
 	dw GetC800IndexHorizLvl($01B0, $0003, $0016)		;>Flag $0 (Group $0) -> LM's CM16 flag $0

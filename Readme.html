@@ -55,34 +55,15 @@
 <center><h1>Memory-based Conditional map 16 blocks</h1></center>
 <h2>Introduction</h2>
 
-<p>This ASM resource allows you to have more than 128 bit flags in your entire game. This is useful for exploration-based hacks should you have blocks that
-shouldn't respawn when the player refreshes the level. An example is locked doors and keys, especially involving backtracking. Another use, which is minor, is
-SA-1 hacks, since blocks are processed during SA-1, they do not have access to WRAM (RAM address in banks <kbd>$7E</kbd> and <kbd>$7F</kbd>), thus the blocks
-themselves cannot use <kbd>$7FC060</kbd> directly. Instead have blocks to use banks <kbd>$40</kbd> or <kbd>$41</kbd>, then uberasm tool to transfer that to <kbd>$7FC060</kbd>
-making it possible for custom blocks to use CM16 blocks on a SA-1 hack.</p>
+<p>This ASM resource allows you to have more than 128 bit flags in your entire game. It is done by instead of storing the &ldquo;disappeared&rdquo; or &ldquo;used-up&rdquo; bit directly into Lunar Magic's Conditional Map16 bit flags at
+RAM <kbd>$7FC060~$7FC06F</kbd>, it instead writes to freeram (<kbd>!Freeram_MemoryFlagRAM</kbd>) where it is saved. This freeram can take an arbitrary size (ranging from 16 to 256 bytes of storage). When a level utilizing this resource
+loads, it transfers a portion of the freeram, 16 bytes of it, to <kbd>$7FC060~$7FC06F</kbd>.</p>
 
-<p>Note that this isn't really a <b>true</b> conditional map 16 expansion, this is because this ASM resource relies on Lunar Magic's conditional map16 blocks
-(<kbd>$7FC060</kbd> to <kbd>$7FC06F</kbd>), therefore, you can use up to 128 flags <u>per level</u> (using within a group of 128 bits in &ldquo;<kbd>!Freeram_MemoryFlag</kbd>&rdquo;).
-This ASM resource just creates a new RAM area defined as <kbd>!Freeram_MemoryFlag</kbd> and &ldquo;divide&rdquo; them into groups of 16 bytes (I call them &ldquo;Group-128&rdquo;, 16 bytes = 128 bits).
-Depending on what level you are in, during level load, all 16 bytes within a specified group (set by the table in <kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd> under the
-sublabel <kbd>.OneHundredTwentyEightFlagGroupList</kbd>) will copy itself into <kbd>$7FC060</kbd>-<kbd>$7FC06F</kbd> to make the blocks spawn, not spawn anymore, or remain changed
-when the player leaves and return.</p>
+<p>As a bonus, this ASM resource does not need duplicate blocks on the map16 editor to tell what specific flag they are associated to. Instead, they search through a list of levels, what layer, and what
+index of <a href="https://smwc.me/m/smw/ram/7EC800"><kbd>$C800</kbd></a> to determine what flag number they should set (if not found, will output a value of <kbd>$FFFE</kbd> to indicate not found,
+which can be used as a failsafe).</p>
 
-<p>Keep in mind, you are not forced to use a different group-128 for every level, you can reuse the same group-128 in multiple levels should the level uses less than 128 flags.
-Just be careful not to have a separate block in another level be inadvertently set the same LM flag number (which also means the same flag number for <kbd>!Freeram_MemoryFlag</kbd>)
-as the other level of the same group (example: Two levels, 105 and 106, both use group 0, one block is a key set to 0, the other level also have a key set to 0, picking up one key
-will affect the spawning of the other key, which you should avoid).</p>
-
-<p><kbd>!Freeram_MemoryFlag</kbd> is <kbd>NumberOfGroups*$10</kbd> bytes long. <kbd>NumberOfGroups</kbd> is how many group-128s you wanted,
-ranging from 1-16. Therefore, the absolute limit on how many bit flags you can have in the entire game is 2048. I don't think any hack would ever need this many flags,
-even if all the playable levels on an average hack uses this mechanic.</p>
-
-<p>This RAM acts as a universal global memory, and shouldn't be reset on level load and overworld (it must be &ldquo;untouched&rdquo; RAM initialized by the SRAM/BWRAM patch when the user starts the game).</p>
-
-<p>The blocks included in this ASM resources is a key (collectible and not carried like a key sprite), locked gates* and doors*. How this works using this resource is that unlike
-the hack <i>Mushroom Kingdom - Under Crimson Skies</i>, this ASM pack do not use duplicate map16 blocks each having their own flag to write, instead when the player
-triggers the block, the block checks what level,  if its on layer 1 or 2, and its location within the level. If all 3 of these attributes are found on a specific index number,
-will use that index number to determine what flag number to set/reset a bit in <kbd>!Freeram_MemoryFlag</kbd>, otherwise it will do nothing as a failsafe.</p>
+<p>The blocks included in this ASM resources is a key (collectible and not carried like a key sprite), locked gates* and doors*.</p>
 
 <ul><li>(*I termed &ldquo;gates&rdquo; and &ldquo;doors&rdquo; as two separate things: &ldquo;gates&rdquo; refer to solid objects that acts as a barrier to prevent the player from accessing other parts of the
 level the player is currently in, while &ldquo;doors&rdquo; is an exit-enabled object that teleports the player to another level. This terminology is to prevent confusion since both in real-life terms,

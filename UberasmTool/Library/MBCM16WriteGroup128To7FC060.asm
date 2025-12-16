@@ -29,54 +29,54 @@ LoadFlagTableToCM16:
 	LDY.w #((.LevelList_End-.LevelList)/2)-1
 	
 	.Loop
-	LDA $010B|!addr			;\Search what index the current level is on.
-	CMP .LevelList,x		;|
-	BEQ .Found			;|
-	
-	..Next
-	DEY				;|
-	DEX #2				;|
-	BPL .Loop			;/
+		LDA $010B|!addr			;\Search what index the current level is on.
+		CMP .LevelList,x		;|
+		BEQ .Found			;|
+		
+		..Next
+			DEY			;|
+			DEX #2			;|
+			BPL .Loop		;/
 	
 	.NotFound
-	;X=$FFFE			;\If in a level not listed, don't do anything
-	;Y=$FFFF			;|
-	BRA .Done			;/
+		;X=$FFFE			;\If in a level not listed, don't do anything
+		;Y=$FFFF			;|
+		BRA .Done			;/
 	
 	.Found
-	;X = (levelIndex*2)
-	;Y = LevelIndex
-	SEP #$20					;
-	LDA.b #!Freeram_MemoryFlag     : STA $00	;\Find what level listed is associated to what 128-group.
-	LDA.b #!Freeram_MemoryFlag>>8  : STA $01	;|
-	LDA.b #!Freeram_MemoryFlag>>16 : STA $02	;|
+		;X = (levelIndex*2)
+		;Y = LevelIndex
+		SEP #$20					;
+		LDA.b #!Freeram_MemoryFlag     : STA $00	;\Find what level listed is associated to what 128-group.
+		LDA.b #!Freeram_MemoryFlag>>8  : STA $01	;|
+		LDA.b #!Freeram_MemoryFlag>>16 : STA $02	;|
 	
-	LDA $00						;|
-	CLC						;|
-	ADC .OneHundredTwentyEightFlagGroupList,y	;|
-	STA $00						;|
-	LDA $01						;|
-	ADC #$00					;|
-	STA $01						;|
-	;LDA $02					;|
-	;ADC #$00					;|
-	;STA $02					;/$00-$02 = !Freeram_MemoryFlag+(GroupNumber*$10)
+		LDA $00						;|
+		CLC						;|
+		ADC .OneHundredTwentyEightFlagGroupList,y	;|
+		STA $00						;|
+		LDA $01						;|
+		ADC #$00					;|
+		STA $01						;|
+		;LDA $02					;|
+		;ADC #$00					;|
+		;STA $02					;/$00-$02 = !Freeram_MemoryFlag+(GroupNumber*$10)
 	
 	.TransferTo7FC060
-	SEP #$30
-	LDY #$0F					;\Transfer.
-	LDX #$0F					;|>Because STA $xxxxxx,y does not exist.
-	..Loop
-	LDA [$00],y					;|
-	STA $7FC060,x					;|
-	DEY						;|
-	DEX						;|
-	BPL ..Loop					;/
+		SEP #$30
+		LDY #$0F					;\Transfer.
+		LDX #$0F					;|>Because STA $xxxxxx,y does not exist.
+		..Loop
+			LDA [$00],y					;|
+			STA $7FC060,x					;|
+			DEY						;|
+			DEX						;|
+			BPL ..Loop					;/
 	
 	.Done
-	SEP #$30
-	PLB				;>Restore bank
-	RTL
+		SEP #$30
+		PLB				;>Restore bank
+		RTL
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;List of levels. Each level are given what group-128 to use.
 ;You cannot have one level with multiple group-128s, however
