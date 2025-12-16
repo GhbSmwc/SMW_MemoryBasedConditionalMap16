@@ -85,8 +85,19 @@
 		<td><kbd id="Output_NumberOfKeyCounters"></kbd></td>
 	</tr>
 </table><br>
-<div class="CodeBlock" id="Output_FlagTable">
+<div class="CodeBlock" id="Output_FlagTable"></div>
+<h3>Placeholder table templates</h3>
+<div>I made this so it is easier to paste the tables in their respective ASM files. All you have to do is edit some placeholder values. Careful not to insert or delete items off the table that isn't the last (bottomost)
+item, else you would have to move the comments (starting from the area that you've insert or deleted to the last) if you are using them to find what flags/level ID they are.</div><br>
+<h2>SRAM/BWRAM plus patch</h2>
+<div>
+	Default flags:
+	<div>
+		<div><label><input type="radio" name="DefaultSRAMValue" id="SRAMDefault_00" onchange="Calculate()" checked><kbd>db %00000000</kbd></label></div>
+		<div><label><input type="radio" name="DefaultSRAMValue" id="SRAMDefault_FF" onchange="Calculate()" ><kbd>db %11111111</kbd></label></div>
+	</div>
 </div>
+<div class="CodeBlock"><pre id="SRAMBWRAMOutput"></pre></div>
 
 <script>
 	Calculate()
@@ -244,5 +255,81 @@
 			}
 			FlagTable.appendChild(Table)
 		}
+		//Generate SRAM/BWRAM output
+		{
+			let SRAMBWRAMText_Output = document.getElementById("SRAMBWRAMOutput")
+			let Text = ""
+			
+			Text += "\tdl $" + Value_Freeram_KeyCounter.toString(16).padStart(6, "0").toUpperCase() + " : dw " + Value_NumberOfKeyCounters.toString(10) + "\t\t;>!Freeram_KeyCounter\n"
+			Text += "\tdl $" + Value_Freeram_MemoryFlagRAM.toString(16).padStart(6, "0").toUpperCase() + " : dw " + NumberOfBytesOfMemoryFlagRAM.toString(10) + "\t\t;>!Freeram_MemoryFlagRAM\n"
+			Text += "\t;[...]\n"
+			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Default values for how many keys you picked up.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n`
+			for (let i =0n; i < Value_NumberOfKeyCounters; i++) {
+				Text += "\tdb $00\t\t;>$" + (Value_Freeram_KeyCounter+i).toString(16).padStart(6, "0").toUpperCase()
+				if (i != Value_NumberOfKeyCounters-1n) {
+					Text += "\n"
+				}
+			}
+			Text += "\n\t;[...]\n"
+			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Default values for the MBCM16 blocks when you start up your new file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n`
+			let DefaultValue = "%00000000"
+			if (document.getElementById("SRAMDefault_FF").checked) {
+				DefaultValue = "%11111111"
+			}
+			for (let i = 0n; i < NumberOfBytesOfMemoryFlagRAM; i++) {
+				let StartingBitOffset = i*8n
+				let LastBitWithinByte = StartingBitOffset+7n
+				let GroupNumber = i/16n
+				Text += "\t" + DefaultValue + "\t\t;>$" + (Value_Freeram_MemoryFlagRAM+i).toString(16).padStart(6, "0").toUpperCase() + " (Byte " + i.toString(10) + "/$" + i.toString(16).toUpperCase() + "), flags $" + StartingBitOffset.toString(16).padStart(3, "0").toUpperCase() + "~$" + LastBitWithinByte.toString(16).padStart(3, "0").toUpperCase() + ", group $" + GroupNumber.toString(16).toUpperCase()
+				if (i != NumberOfBytesOfMemoryFlagRAM-1n) {
+					Text += "\n"
+				}
+			}
+			SRAMBWRAMText_Output.textContent = Text
+		}
+		//Generate SearchBlockFlagIndex.asm tables
+		{
+		
+		}
+		//Generate MBCM16WriteGroup128To7FC060.asm tables
+		{
+		
+		}
 	}
+	
+	
+	
+//These makes all <pre>...</pre> have an effect that double-clicking will select all the text
+//in it, to make it easy to copy code and paste it in your ASM stuff.
+//
+//Credit:
+// https://keestalkstech.com/2014/04/click-to-select-all-on-the-pre-element/
+// https://www.sanwebe.com/2014/04/select-all-text-in-element-on-click
+document.addEventListener('dblclick', e => {
+  let pre = getClosest(e.target, "PRE");
+  if (pre && e.ctrlKey) {
+    let range = new Range();
+    range.selectNodeContents(pre);
+    document.getSelection().removeAllRanges();
+    document.getSelection().addRange(range);
+  }
+});
+
+function getClosest(el, tagName) {
+  tagName = tagName && tagName.toUpperCase();
+
+  if (!tagName || !el)
+    return null;
+
+  do
+    if (el.nodeName === tagName)
+      return el;
+  while (el = el.parentNode);
+
+  return null;
+}
 </script>
