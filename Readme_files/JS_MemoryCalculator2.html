@@ -52,6 +52,13 @@
 		</style>
 	</head>
 <body style="max-width: 1000px; margin: auto; padding: 15px">
+<div>
+	Notes:
+	<ul>
+		<li>Hold down CTRL and double click code areas to instantly-select the entire text, then you can easily copy via CTRL+C.</li>
+		<li>Make sure your browser supports <kbd>BigInt</kbd>.</li>
+	</ul>
+</div>
 <table>
 	<tr>
 		<td><kbd>!Freeram_MemoryFlagRAM</kbd> address:</td>
@@ -89,16 +96,21 @@
 <h3>Placeholder table templates</h3>
 <div>I made this so it is easier to paste the tables in their respective ASM files. All you have to do is edit some placeholder values. Careful not to insert or delete items off the table that isn't the last (bottomost)
 item, else you would have to move the comments (starting from the area that you've insert or deleted to the last) if you are using them to find what flags/level ID they are.</div><br>
-<h2>SRAM/BWRAM plus patch</h2>
 <div>
-	Default flags:
+	<h2>SRAM/BWRAM plus patch</h2>
 	<div>
-		<div><label><input type="radio" name="DefaultSRAMValue" id="SRAMDefault_00" onchange="Calculate()" checked><kbd>db %00000000</kbd></label></div>
-		<div><label><input type="radio" name="DefaultSRAMValue" id="SRAMDefault_FF" onchange="Calculate()" ><kbd>db %11111111</kbd></label></div>
+		Default flags:
+		<div>
+			<div><label><input type="radio" name="DefaultSRAMValue" id="SRAMDefault_00" onchange="Calculate()" checked><kbd>db %00000000</kbd></label></div>
+			<div><label><input type="radio" name="DefaultSRAMValue" id="SRAMDefault_FF" onchange="Calculate()" ><kbd>db %11111111</kbd></label></div>
+		</div>
 	</div>
+	<div class="CodeBlock"><pre id="SRAMBWRAMOutput"></pre></div>
 </div>
-<div class="CodeBlock"><pre id="SRAMBWRAMOutput"></pre></div>
-
+<div>
+	<h2>SearchBlockFlagIndex.asm (custom blocks routine)</h2>
+	<div class="CodeBlock"><pre id="SearchBlockFlagIndexOutput"></pre></div>
+</div>
 <script>
 	Calculate()
 	function IncrementDecrementHex() {
@@ -257,7 +269,6 @@ item, else you would have to move the comments (starting from the area that you'
 		}
 		//Generate SRAM/BWRAM output
 		{
-			let SRAMBWRAMText_Output = document.getElementById("SRAMBWRAMOutput")
 			let Text = ""
 			
 			Text += "\tdl $" + Value_Freeram_KeyCounter.toString(16).padStart(6, "0").toUpperCase() + " : dw " + Value_NumberOfKeyCounters.toString(10) + "\t\t;>!Freeram_KeyCounter\n"
@@ -268,13 +279,9 @@ item, else you would have to move the comments (starting from the area that you'
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n`
 			for (let i =0n; i < Value_NumberOfKeyCounters; i++) {
 				Text += "\tdb $00\t\t;>$" + (Value_Freeram_KeyCounter+i).toString(16).padStart(6, "0").toUpperCase()
-				if (i != Value_NumberOfKeyCounters-1n) {
-					Text += "\n"
-				}
 			}
-			Text += "\n\t;[...]\n"
 			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Default values for the MBCM16 blocks when you start up your new file
+;Default spawn flags for the MBCM16 blocks when you start up your new file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n`
 			let DefaultValue = "%00000000"
 			if (document.getElementById("SRAMDefault_FF").checked) {
@@ -284,16 +291,64 @@ item, else you would have to move the comments (starting from the area that you'
 				let StartingBitOffset = i*8n
 				let LastBitWithinByte = StartingBitOffset+7n
 				let GroupNumber = i/16n
-				Text += "\t" + DefaultValue + "\t\t;>$" + (Value_Freeram_MemoryFlagRAM+i).toString(16).padStart(6, "0").toUpperCase() + " (Byte " + i.toString(10) + "/$" + i.toString(16).toUpperCase() + "), flags $" + StartingBitOffset.toString(16).padStart(3, "0").toUpperCase() + "~$" + LastBitWithinByte.toString(16).padStart(3, "0").toUpperCase() + ", group $" + GroupNumber.toString(16).toUpperCase()
+				Text += "\tdb " + DefaultValue + "\t\t;>$" + (Value_Freeram_MemoryFlagRAM+i).toString(16).padStart(6, "0").toUpperCase() + " (Byte " + i.toString(10) + "/$" + i.toString(16).toUpperCase() + "), flags $" + StartingBitOffset.toString(16).padStart(3, "0").toUpperCase() + "~$" + LastBitWithinByte.toString(16).padStart(3, "0").toUpperCase() + ", group $" + GroupNumber.toString(16).toUpperCase()
 				if (i != NumberOfBytesOfMemoryFlagRAM-1n) {
 					Text += "\n"
 				}
 			}
-			SRAMBWRAMText_Output.textContent = Text
+			document.getElementById("SRAMBWRAMOutput").textContent = Text
 		}
-		//Generate SearchBlockFlagIndex.asm tables
+		//Generate SearchBlockFlagIndex.asm tables //SearchBlockFlagIndexOutput
 		{
-		
+			let Text = ""
+			let LevelNumbersTableText = ""
+			let LayerNumberTableText = ""
+			let LevelCoordinateTableText = ""
+			for (let i=0n; i<NumberOfBitsOfMemoryFlagRAM; i++) {
+				let LMFlagNumber = i % 128n
+				let GroupNumber = i / 128n
+				let IndexingComment = ";>Flag $" + i.toString(16).toUpperCase() + " (Group $" + GroupNumber.toString(16).toUpperCase() + ") -> LM\'s CM16 flag $" + LMFlagNumber.toString(16).toUpperCase() + "\n"
+				
+				LevelNumbersTableText += "\tdw $FFFF\t\t" + IndexingComment
+				LayerNumberTableText += "\tdb $00\t\t" + IndexingComment
+				LevelCoordinateTableText  += "\tdw GetC800IndexHorizLvl($01B0, $0000, $0000)\t\t" + IndexingComment
+				
+			}
+			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;List of level numbers. This is essentially what level the flags are in.
+;
+;Note: you CAN have duplicate level numbers here if you have multiple flags
+;in a single level.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+?GetFlagNumberLevelIndexStart:\n`
+			Text += LevelNumbersTableText
+			Text += "?GetFlagNumberLevelIndexEnd:\n"
+			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;List of what layer the flag is on. Put "$01" for layer 2 blocks if you
+;are using a layer 2 level and have that flagged block on that layer, otherwise put "$00" instead.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+?GetFlagNumberLayerProcessingStart:\n`
+			Text += LayerNumberTableText
+			Text += `?GetFlagNumberLayerProcessingEnd:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;List of positions.
+;With the help of asar's function (not sure if Xkas first made this or not),
+;adding a location to the table is very easy. Format:
+;
+;dw GetC800IndexHorizLvl($HHHH, $XXXX, $YYYY)
+;dw GetC800IndexVertiLvl($XXXX, $YYYY)
+;
+;-$HHHH is the level height (in pixels), basically RAM address $13D7. Fastest way to
+; know what value is this in a level is in lunar magic, hover your mouse on the last
+; row of blocks, and the status bar on the window (<XPos_in_hex>,<YPos_in_hex>:<TileNumber>),
+; take the <YPos_in_hex> and add 1 AND THEN multiply by $10 (or just add a zero at the end;
+; example: ($1A + 1)*$10 = $1B0)
+;-$XXXX and $YYYY are the block coordinates, in units of 16x16 blocks (not pixels).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+?GetFlagNumberC800IndexStart:\n`
+			Text += LevelCoordinateTableText
+			Text += "GetFlagNumberC800IndexEnd:"
+			document.getElementById("SearchBlockFlagIndexOutput").textContent = Text
 		}
 		//Generate MBCM16WriteGroup128To7FC060.asm tables
 		{
