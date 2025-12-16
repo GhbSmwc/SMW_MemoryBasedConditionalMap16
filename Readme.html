@@ -2,8 +2,8 @@
 	<head>
 		<style>
 			html {
-			background-color: #000207;
-			color: white;
+			background-color: #101010;
+			color: rgb(221, 221, 221);
 			font-family: sans-serif;
 			}
 			
@@ -12,14 +12,46 @@
 			border-collapse: collapse;
 			}
 			
-			span.NoLineBreak {
-				white-space: nowrap;
+			abbr{cursor: help;}
+			img.img-hor {
+				-moz-transform: scaleX(-1);
+				-o-transform: scaleX(-1);
+				-webkit-transform: scaleX(-1);
+				transform: scaleX(-1);
+				filter: FlipH;
+				-ms-filter: "FlipH";
+			}
+			div.CodeBlock {
+				overflow: auto;
+				width: 1000px;
+				height: 500px;
+				border: 1px solid white;
+				resize: both;
+				background-color: #101010;
+			}
+			pre {
+				margin: 0px;
+			}
+			*.FixedWidth {
+				font-family: monospace;
 			}
 			
-			abbr{cursor: help;}
+			*.NoLineBreak {
+				font-family: monospace;
+				white-space: pre;
+			}
+			*.Center {
+				text-align: center;
+			}
+			li {
+				padding: 5px;
+			}
+			tr.RedBackground {
+				background-color: #400000;
+			}
 		</style>
 	</head>
-<body>
+<body style="max-width: 1000px; margin: auto; padding: 15px">
 <center><h1>Memory-based Conditional map 16 blocks</h1></center>
 <h2>Introduction</h2>
 
@@ -52,9 +84,9 @@ the hack <i>Mushroom Kingdom - Under Crimson Skies</i>, this ASM pack do not use
 triggers the block, the block checks what level,  if its on layer 1 or 2, and its location within the level. If all 3 of these attributes are found on a specific index number,
 will use that index number to determine what flag number to set/reset a bit in <kbd>!Freeram_MemoryFlag</kbd>, otherwise it will do nothing as a failsafe.</p>
 
-<ul><li><p>(*I termed &ldquo;gates&rdquo; and &ldquo;doors&rdquo; as two separate things: &ldquo;gates&rdquo; refer to solid objects that acts as a barrier to prevent the player from accessing other parts of the
+<ul><li>(*I termed &ldquo;gates&rdquo; and &ldquo;doors&rdquo; as two separate things: &ldquo;gates&rdquo; refer to solid objects that acts as a barrier to prevent the player from accessing other parts of the
 level the player is currently in, while &ldquo;doors&rdquo; is an exit-enabled object that teleports the player to another level. This terminology is to prevent confusion since both in real-life terms,
-they control access to another point.)</p></li></ul>
+they control access to another point.)</li></ul>
 
 <h2>What you need</h2>
 <ul>
@@ -97,18 +129,18 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 			<li>
 				<p>Because the blocks check their locations and level numbers, you must open these files:</p>
 				<ul>
-					<li><p><kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>, this determines what group-128 to use for each level using the MBCM16.</p></li>
-					<li><p><kbd>UberasmTool/Library/MBCM16DisplayKeyCounter</kbd>, this displays the key counter on the heads-up display (HUD) of how many keys of a particular level.</p></li>
-					<li><p><kbd>CustomBlocks/routines/SearchBlockFlagIndex.asm</kbd>, blocks' routine to find out what flag they are.</p></li>
-					<li><p><kbd>CustomBlocks/routines/GetWhatKeyCounter</kbd>, blocks' routine to find what key to use.</p></li>
+					<li><kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>, this determines what group-128 to use for each level using the MBCM16. See the stuff under label <kbd>.LevelList</kbd>.</li>
+					<li><kbd>UberasmTool/Library/MBCM16DisplayKeyCounter</kbd>, this displays the key counter on the heads-up display (HUD) of how many keys of a particular level.</li>
+					<li><kbd>CustomBlocks/routines/SearchBlockFlagIndex.asm</kbd>, blocks' routine to find out what flag they are.</li>
+					<li><kbd>CustomBlocks/routines/GetWhatKeyCounter</kbd>, blocks' routine to find what key to use.</li>
 				</ul>
 				<p>These contains a list of level numbers, block location within level and group numbers (times <kbd>$10</kbd>), and what key counter for the level to use.
 				Comments should fully explained how each table correspond. Even better is that the JS tool (linked previously) also print out placeholder template tables (with comments
 				pointing of each item and their flag numbers/Level ID) for you to copy.</p>
 				
-				<li><p>Open <kbd>FlagMemoryDefines/Defines.asm</kbd> and edit <kbd>!Freeram_MemoryFlag</kbd> if you find RAM conflicts with another ASM resource. I highly
+				<li>Open <kbd>FlagMemoryDefines/Defines.asm</kbd> and edit <kbd>!Freeram_MemoryFlag</kbd> if you find RAM conflicts with another ASM resource. I highly
 				recommend make note as (including before and after) you insert any patches (including third party) so it is easier to keep track of. There's also other settings you
-				can play around with. Also, this assumes you are using the super status bar patch, if you are not using that and/or using other patches, adjust the defines under &ldquo;<kbd>HUD stuff</kbd>&rdquo;.</p></li>
+				can play around with. Also, this assumes you are using the super status bar patch, if you are not using that and/or using other patches, adjust the defines under &ldquo;<kbd>HUD stuff</kbd>&rdquo;.</li>
 			</li>
 		</ol>
 	</li>
