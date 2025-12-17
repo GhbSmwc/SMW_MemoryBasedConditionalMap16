@@ -387,7 +387,7 @@ item, else you would have to move the comments (starting from the area that you'
 			for (let i = 0n; i < 64n; i++) {
 				let BottomID = i*8n
 				let TopID = BottomID+7n
-				let IndexingComment = ";>Level ID: " + BottomID.toString(10) + "~" + TopID.toString(10)
+				let IndexingComment = ";>Correlation ID: " + BottomID.toString(10) + "~" + TopID.toString(10)
 				
 				LevelListText += "\tdw $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF\t" + IndexingComment + "\n"
 				WhatGroup128Text += "\tdb $00, $00, $00, $00, $00, $00, $00, $00\t" + IndexingComment + "\n"
