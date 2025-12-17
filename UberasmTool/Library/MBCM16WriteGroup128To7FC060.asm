@@ -78,11 +78,9 @@ LoadFlagTableToCM16:
 		PLB				;>Restore bank
 		RTL
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;List of levels. Each level are given what group-128 to use.
-;You cannot have one level with multiple group-128s, however
-;you can have multiple levels using the same group-128, which
-;that saves you memory if you find one level using less than 128
-;flags.
+;List of levels. Each nth item in both tables represents a level associated to what group 128. You cannot
+;have one level with multiple group-128s, however you can have multiple levels using the same group-128,
+;which that saves you memory if you find one level using less than 128 flags.
 ;
 ;Also, you cannot have duplicate level numbers here, else during
 ;running this, it will ONLY take the last level number of the duplicates

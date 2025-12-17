@@ -111,6 +111,10 @@ item, else you would have to move the comments (starting from the area that you'
 	<h2>SearchBlockFlagIndex.asm (custom blocks routine)</h2>
 	<div class="CodeBlock"><pre id="SearchBlockFlagIndexOutput"></pre></div>
 </div>
+<div>
+	<h2>MBCM16WriteGroup128To7FC060.asm (uberasm tool)</h2>
+	<div class="CodeBlock"><pre id="Level2Group128"></pre></div>
+</div>
 <script>
 	Calculate()
 	function IncrementDecrementHex() {
@@ -361,7 +365,45 @@ item, else you would have to move the comments (starting from the area that you'
 		}
 		//Generate MBCM16WriteGroup128To7FC060.asm tables
 		{
-		
+			let Text = ""
+			
+			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;List of levels. Each nth item in both tables represents a level associated to what group 128. You cannot
+;have one level with multiple group-128s, however you can have multiple levels using the same group-128,
+;which that saves you memory if you find one level using less than 128 flags.
+;
+;Also, you cannot have duplicate level numbers here, else during
+;running this, it will ONLY take the last level number of the duplicates
+;matching with the current level number.
+;
+;Although I could simply only have the table [.OneHundredTwentyEightFlagGroupList], have the index be
+;the level number (X ranging from $0000 to $01FF), and have the value $FF to indcate that the level does
+;not use MBCM16, it is very possible that you may have levels that don't use MBCM16 at all, thus resulting
+;lots of unused values in the table with $FF, which waste space.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.LevelList\n`
+			let LevelListText = ""
+			let WhatGroup128Text = ""
+			for (let i = 0n; i < 64n; i++) {
+				let BottomID = i*8n
+				let TopID = BottomID+7n
+				let IndexingComment = ";>Level ID: " + BottomID.toString(10) + "~" + TopID.toString(10)
+				
+				LevelListText += "\tdw $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF\t" + IndexingComment + "\n"
+				WhatGroup128Text += "\tdb $00, $00, $00, $00, $00, $00, $00, $00\t" + IndexingComment + "\n"
+			}
+			Text += LevelListText
+			Text += "..End\n"
+			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;This table specifies what group-128 each level should use.
+;Only enter numbers here as [$X0], where X is the group number in hex (therefore, numbers here must be
+;multiples of 16: [ValueYouPutHere = GroupNumber * $10]).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.OneHundredTwentyEightFlagGroupList\n`
+			Text += WhatGroup128Text
+			Text += "..End"
+			
+			document.getElementById("Level2Group128").textContent = Text
 		}
 	}
 	
