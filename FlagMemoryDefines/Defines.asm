@@ -37,20 +37,20 @@ endif
 ;and the formula explaining how much bytes they use.
 ;
 	if !sa1 == 0
-		!Freeram_MemoryFlag = $7FAD49
+		!Freeram_MBCM16_MemoryFlag = $7FAD49
 	else
-		!Freeram_MemoryFlag = $4001B9
+		!Freeram_MBCM16_MemoryFlag = $4001B9
 	endif
 		;^[BytesUsed = NumberOfGroups*$10] [Must be saved] a table containing an array of
 		; "global memory" flags. NumberOfGroups is how many groups of 128 bit flags
 		; you want in your hack, up to 16. For example:
 		;
-		; One level uses all 128 bits on !Freeram_MemoryFlag to !Freeram_MemoryFlag+$0F
-		; Another level also uses 128 bits !Freeram_MemoryFlag+$10 to !Freeram_MemoryFlag+$1F
+		; One level uses all 128 bits on !Freeram_MBCM16_MemoryFlag to !Freeram_MBCM16_MemoryFlag+$0F
+		; Another level also uses 128 bits !Freeram_MBCM16_MemoryFlag+$10 to !Freeram_MBCM16_MemoryFlag+$1F
 		;
 		; This means 2 groups of 128-bits would result the formula [32 = 2 * $10] (32 bytes),
-		; Therefore the range of !Freeram_MemoryFlag is !Freeram_MemoryFlag+$0 to
-		; !Freeram_MemoryFlag+$1F (default example: $7FAD49 to $7FAD68)
+		; Therefore the range of !Freeram_MBCM16_MemoryFlag is !Freeram_MBCM16_MemoryFlag+$0 to
+		; !Freeram_MBCM16_MemoryFlag+$1F (default example: $7FAD49 to $7FAD68)
 		;
 		; You can also make multiple levels use the same group-128 if any of the level
 		; sharing this uses less than 128 flags to save memory and not have "gaps".
@@ -58,12 +58,12 @@ endif
 		; I would highly recommend make a note in a txt file listing the RAM flag areas
 		; so you can keep track of the flags and where they are, made-up example:
 		;
-		; !Freeram_MemoryFlag+$00 to !Freeram_MemoryFlag+$0F: used in level $105, $106 ($105: 0-63, $106: 64-127)
-		; !Freeram_MemoryFlag+$10 to !Freeram_MemoryFlag+$1F: used in level $107, $102, $103 ($107: 0-49, $102: 50-100, $103: 101-127)
+		; !Freeram_MBCM16_MemoryFlag+$00 to !Freeram_MBCM16_MemoryFlag+$0F: used in level $105, $106 ($105: 0-63, $106: 64-127)
+		; !Freeram_MBCM16_MemoryFlag+$10 to !Freeram_MBCM16_MemoryFlag+$1F: used in level $107, $102, $103 ($107: 0-49, $102: 50-100, $103: 101-127)
 	if !sa1 == 0
-		!Freeram_KeyCounter = $7FAD79
+		!Freeram_MBCM16_KeyCounter = $7FAD79
 	else
-		!Freeram_KeyCounter = $4001E9
+		!Freeram_MBCM16_KeyCounter = $4001E9
 	endif
 		;^[BytesUsed = How_Many_local_key_counters_you_want] [Must be saved] How many keys the player have. Note that this is stored as a table
 		; with each byte being their own separate key counter local to the level(s) they are associated with. This is to prevent
@@ -73,9 +73,9 @@ endif
 		;*Main level, as in all the levels accessible from the level entered from the map, in case if your dungeon spans multiple levels.
 		;
 		; Here is how the memory works (made-up example):
-		; !Freeram_KeyCounter+$00: $0105, $01CB
-		; !Freeram_KeyCounter+$01: $0106, $01CA
-		; !Freeram_KeyCounter+$02: $0103, $01FD
+		; !Freeram_MBCM16_KeyCounter+$00: $0105, $01CB
+		; !Freeram_MBCM16_KeyCounter+$01: $0106, $01CA
+		; !Freeram_MBCM16_KeyCounter+$02: $0103, $01FD
 		; [...]
 		;
 		; So levels are given what key counter they should use, if you don't have keys matching to the locked gates/doors, it won't open.

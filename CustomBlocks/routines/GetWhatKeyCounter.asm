@@ -14,7 +14,7 @@
 ;key mechanic.
 ;
 ;Output:
-; -A (8-bit): A number 0-255 to be used as an index from !Freeram_KeyCounter.
+; -A (8-bit): A number 0-255 to be used as an index from !Freeram_MBCM16_KeyCounter.
 ; -Carry (check using BCC/BCS): Set if you are trying to use this block in a level that isn't
 ;  assigned to what key counter.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -2,19 +2,19 @@
 ;Execute like this:
 ;in level:
 ;	init:						;>Init so the counter displays as the level loads.
-;	LDY #$xx					;>$xx is what key counter to use, as an index from !Freeram_KeyCounter.
+;	LDY #$xx					;>$xx is what key counter to use, as an index from !Freeram_MBCM16_KeyCounter.
 ;	JSL MBCM16DisplayKeyCounter_DisplayHud
 ;	;[...]
 ;	RTL
 ;	main:
-;	LDY #$xx					;>$xx is what key counter to use, as an index from !Freeram_KeyCounter.
+;	LDY #$xx					;>$xx is what key counter to use, as an index from !Freeram_MBCM16_KeyCounter.
 ;	JSL MBCM16DisplayKeyCounter_DisplayHud
 ;	;[...]
 ;	RTL
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Display key counter on the HUD
 ;
-;Y index = Index from !Freeram_KeyCounter.
+;Y index = Index from !Freeram_MBCM16_KeyCounter.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 DisplayHud:
 	
@@ -32,7 +32,7 @@ DisplayHud:
 			BPL ..Loop
 	
 		TYX
-		LDA !Freeram_KeyCounter,x
+		LDA !Freeram_MBCM16_KeyCounter,x
 		BEQ .Done
 	.WriteTilePrefix
 		;Write <keysymbol>X<1 or 2 digits here>
@@ -52,7 +52,7 @@ DisplayHud:
 			STA !Settings_MBCM16_KeyCounterTilePropPos+(!StatusbarFormat*$03)
 		endif
 	
-		LDA !Freeram_KeyCounter,x
+		LDA !Freeram_MBCM16_KeyCounter,x
 		CMP.b #10
 		BCS ..TwoDigits
 	

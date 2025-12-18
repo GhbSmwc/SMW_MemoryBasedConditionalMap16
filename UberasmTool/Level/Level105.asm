@@ -7,13 +7,13 @@ load:
 	RTL
 main:
 	;Display key counter on the HUD (during the level at play)
-	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_KeyCounter.
+	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_MBCM16_KeyCounter.
 	JSL MBCM16DisplayKeyCounter_DisplayHud
 	;[...]
 	RTL
 init:
 	;Display key counter on the HUD (during screen fading into the level)
-	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_KeyCounter.
+	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_MBCM16_KeyCounter.
 	JSL MBCM16DisplayKeyCounter_DisplayHud
 	;[...]
 	RTL

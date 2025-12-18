@@ -53,6 +53,10 @@
 	</head>
 <body style="max-width: 1000px; margin: auto; padding: 15px">
 <div>
+	<div><a href="../Readme.html#MemoryCalculator2">Back (contents)</a></div>
+	<div><a href="../Readme.html#JS_MemoryCalculator2_SRAMBwram">Back (SRAM/BWRAM tutorial)</a></div>
+</div>
+<div>
 	Notes:
 	<ul>
 		<li>Hold down CTRL and double click code areas to instantly-select the entire text, then you can easily copy via CTRL+C.</li>
@@ -61,7 +65,7 @@
 </div>
 <table>
 	<tr>
-		<td><kbd>!Freeram_MemoryFlagRAM</kbd> address:</td>
+		<td><kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd> address:</td>
 		<td>$<input type="text" value="7FAD49" id="Input_Freeram_MemoryFlagRAM" onkeydown="IncrementDecrementHex()" onchange="CorrectHexAddresses()"></td>
 	</tr>
 	<tr>
@@ -69,7 +73,7 @@
 		<td><input type="number" value="2" id="Input_NumberOfGroup128s" min="1" max="16" onchange="CorrectValueRange()"></td>
 	</tr>
 	<tr>
-		<td><kbd>!Freeram_KeyCounter</kbd> address:</td>
+		<td><kbd>!Freeram_MBCM16_KeyCounter</kbd> address:</td>
 		<td>$<input type="text" value="7FAD79" id="Input_Freeram_KeyCounter" onkeydown="IncrementDecrementHex()" onchange="CorrectHexAddresses()"></td>
 	</tr>
 	<tr>
@@ -80,7 +84,7 @@
 <hr>
 <table>
 	<tr>
-		<td><kbd>!Freeram_MemoryFlagRAM</kbd> used:</td>
+		<td><kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd> used:</td>
 		<td><kbd id="Output_Freeram_MemoryFlagRAM_Usage"></kbd></td>
 	</tr>
 	<tr>
@@ -88,7 +92,7 @@
 		<td><kbd id="Output_FlagNumberingRangeOfMemoryFlag"></kbd></td>
 	</tr>
 	<tr>
-		<td><kbd>!Freeram_KeyCounter</kbd> used:</td>
+		<td><kbd>!Freeram_MBCM16_KeyCounter</kbd> used:</td>
 		<td><kbd id="Output_NumberOfKeyCounters"></kbd></td>
 	</tr>
 </table><br>
@@ -210,7 +214,7 @@ item, else you would have to move the comments (starting from the area that you'
 			let Table_HeaderRow2_Subtype = document.createElement("tr")
 			
 			let Table_Header2_MemoryFlagRAMLabel = document.createElement("th")
-			Table_Header2_MemoryFlagRAMLabel.appendChild(document.createTextNode("!Freeram_MemoryFlagRAM address"))
+			Table_Header2_MemoryFlagRAMLabel.appendChild(document.createTextNode("!Freeram_MBCM16_MemoryFlagRAM address"))
 			Table_Header2_MemoryFlagRAMLabel.style.fontFamily = "monospace"
 			Table_HeaderRow2_Subtype.appendChild(Table_Header2_MemoryFlagRAMLabel)
 			
@@ -281,8 +285,8 @@ item, else you would have to move the comments (starting from the area that you'
 		{
 			let Text = ""
 			
-			Text += "\tdl $" + Value_Freeram_KeyCounter.toString(16).padStart(6, "0").toUpperCase() + " : dw " + Value_NumberOfKeyCounters.toString(10) + "\t\t;>!Freeram_KeyCounter\n"
-			Text += "\tdl $" + Value_Freeram_MemoryFlagRAM.toString(16).padStart(6, "0").toUpperCase() + " : dw " + NumberOfBytesOfMemoryFlagRAM.toString(10) + "\t\t;>!Freeram_MemoryFlagRAM\n"
+			Text += "\tdl $" + Value_Freeram_KeyCounter.toString(16).padStart(6, "0").toUpperCase() + " : dw " + Value_NumberOfKeyCounters.toString(10) + "\t\t;>!Freeram_MBCM16_KeyCounter\n"
+			Text += "\tdl $" + Value_Freeram_MemoryFlagRAM.toString(16).padStart(6, "0").toUpperCase() + " : dw " + NumberOfBytesOfMemoryFlagRAM.toString(10) + "\t\t;>!Freeram_MBCM16_MemoryFlagRAM\n"
 			Text += "\t;[...]\n"
 			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Default values for how many keys you picked up.

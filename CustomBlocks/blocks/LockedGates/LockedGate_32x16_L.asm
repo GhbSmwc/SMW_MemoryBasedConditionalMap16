@@ -48,7 +48,7 @@ Main:
 	+
 	TAX							;>Transfer key counter index to X.
 	PHX							;>Preserve key counter index.
-	LDA !Freeram_KeyCounter,x				;\No keys, no pass
+	LDA !Freeram_MBCM16_KeyCounter,x			;\No keys, no pass
 	BEQ DonePullX						;/
 ;Set flags to not respawn.
 	REP #$20
@@ -69,9 +69,9 @@ Main:
 	CLC
 	%WriteBlockFlagIndex()
 	PLX							;>Reobtain key counter index.
-	LDA !Freeram_KeyCounter,x				;\Decrement key counter
+	LDA !Freeram_MBCM16_KeyCounter,x			;\Decrement key counter
 	DEC A							;|
-	STA !Freeram_KeyCounter,x				;/
+	STA !Freeram_MBCM16_KeyCounter,x			;/
 ;Code here
 	LDY #$00						;\Don't be solid the frame the player
 	LDA #$25						;|makes this block disappear.

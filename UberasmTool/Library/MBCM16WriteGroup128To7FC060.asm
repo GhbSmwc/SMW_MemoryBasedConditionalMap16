@@ -4,19 +4,19 @@
 ;Load flag table into conditional map16 flags (CM16: $7FC060)
 ;
 ;Because the CM16 is 16 bytes large ($7FC060-$7FC06F; total of
-;128 bits numbered from $00-$7F), !Freeram_MemoryFlag will have
+;128 bits numbered from $00-$7F), !Freeram_MBCM16_MemoryFlag will have
 ;to be divided into groups of 16 bytes:
 ;
-;Group 0: !Freeram_MemoryFlag+$00 to !Freeram_MemoryFlag+$0F
-;Group 1: !Freeram_MemoryFlag+$10 to !Freeram_MemoryFlag+$1F
-;Group 2: !Freeram_MemoryFlag+$20 to !Freeram_MemoryFlag+$0F
+;Group 0: !Freeram_MBCM16_MemoryFlag+$00 to !Freeram_MBCM16_MemoryFlag+$0F
+;Group 1: !Freeram_MBCM16_MemoryFlag+$10 to !Freeram_MBCM16_MemoryFlag+$1F
+;Group 2: !Freeram_MBCM16_MemoryFlag+$20 to !Freeram_MBCM16_MemoryFlag+$0F
 ;[...]
 ;
 ;This code handles it like this (in this order):
 ;1) Find what index number of the current level being loaded
 ;2) Use that index number to find what group the level is
 ;   associated with.
-;3) Take the now-known group in !Freeram_MemoryFlag and transfer
+;3) Take the now-known group in !Freeram_MBCM16_MemoryFlag and transfer
 ;   the data into $7FC060-$7FC06F.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadFlagTableToCM16:
@@ -47,9 +47,9 @@ LoadFlagTableToCM16:
 		;X = (levelIndex*2)
 		;Y = LevelIndex
 		SEP #$20					;
-		LDA.b #!Freeram_MemoryFlag     : STA $00	;\Find what level listed is associated to what 128-group.
-		LDA.b #!Freeram_MemoryFlag>>8  : STA $01	;|
-		LDA.b #!Freeram_MemoryFlag>>16 : STA $02	;|
+		LDA.b #!Freeram_MBCM16_MemoryFlag     : STA $00	;\Find what level listed is associated to what 128-group.
+		LDA.b #!Freeram_MBCM16_MemoryFlag>>8  : STA $01	;|
+		LDA.b #!Freeram_MBCM16_MemoryFlag>>16 : STA $02	;|
 	
 		LDA $00						;|
 		CLC						;|
@@ -60,7 +60,7 @@ LoadFlagTableToCM16:
 		STA $01						;|
 		;LDA $02					;|
 		;ADC #$00					;|
-		;STA $02					;/$00-$02 = !Freeram_MemoryFlag+(GroupNumber*$10)
+		;STA $02					;/$00-$02 = !Freeram_MBCM16_MemoryFlag+(GroupNumber*$10)
 	
 	.TransferTo7FC060
 		SEP #$30

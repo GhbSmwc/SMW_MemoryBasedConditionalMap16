@@ -50,7 +50,7 @@ endif
 		BCS Done						;>If not found, skip.
 		TAX							;>Transfer key counter index to X.
 		PHX							;>Preserve key counter index.
-		LDA !Freeram_KeyCounter,x				;\No keys, no pass
+		LDA !Freeram_MBCM16_KeyCounter,x			;\No keys, no pass
 		BEQ DonePullX						;/
 	;Set flags to not respawn.
 		REP #$20
@@ -80,9 +80,9 @@ endif
 		CLC
 		%WriteBlockFlagIndex()
 		PLX							;>Reobtain key counter index.
-		LDA !Freeram_KeyCounter,x				;\Decrement key counter
+		LDA !Freeram_MBCM16_KeyCounter,x			;\Decrement key counter
 		DEC A							;|
-		STA !Freeram_KeyCounter,x				;/
+		STA !Freeram_MBCM16_KeyCounter,x			;/
 
 	LDA #$0F		;\  Enter door SFX
 	STA $1DFC|!addr	;/

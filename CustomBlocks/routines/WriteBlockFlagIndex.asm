@@ -30,16 +30,16 @@
 	BCS ?SetBit
 	
 	;ClearBit
-	LDA ?BitSelectTable,y		;\Force bit to be 0
-	EOR.b #%11111111		;|
-	AND !Freeram_MemoryFlag,x	;|
-	STA !Freeram_MemoryFlag,x	;|
-	BRA ?Done			;/
+	LDA ?BitSelectTable,y			;\Force bit to be 0
+	EOR.b #%11111111			;|
+	AND !Freeram_MBCM16_MemoryFlag,x	;|
+	STA !Freeram_MBCM16_MemoryFlag,x	;|
+	BRA ?Done				;/
 	
 	?SetBit
 	LDA ?BitSelectTable,y		;\Force bit to be 1
-	ORA !Freeram_MemoryFlag,x	;|
-	STA !Freeram_MemoryFlag,x	;/
+	ORA !Freeram_MBCM16_MemoryFlag,x	;|
+	STA !Freeram_MBCM16_MemoryFlag,x	;/
 	
 	?Done:
 	PLY			;>Restore Y

@@ -35,13 +35,13 @@
 	
 	<li><p>Leading zeros are omitted here, so if you are using CTR+F to find the flag number, don't have leading zeroes (find &ldquo;$03&rdquo; should be &ldquo;$3&rdquo; instead).</p></li>
 	</ul>
-	<kbd>!Freeram_MemoryFlagRAM = </kbd>$<input type="text" onchange="Calculate()" value="7FAD49" id="Freeram_MemoryFlagRAM" list="MemoryFlagRAMTables"><button onclick="BigintIncreaseDecreaseHexInput(1n, 'Freeram_MemoryFlagRAM', 0n, BigInt('0xFFFFFF')) ">+</button><button onclick="BigintIncreaseDecreaseHexInput(-1n, 'Freeram_MemoryFlagRAM', 0n, BigInt('0xFFFFFF')) ">-</button>
+	<kbd>!Freeram_MBCM16_MemoryFlagRAM = </kbd>$<input type="text" onchange="Calculate()" value="7FAD49" id="Freeram_MemoryFlagRAM" list="MemoryFlagRAMTables"><button onclick="BigintIncreaseDecreaseHexInput(1n, 'Freeram_MemoryFlagRAM', 0n, BigInt('0xFFFFFF')) ">+</button><button onclick="BigintIncreaseDecreaseHexInput(-1n, 'Freeram_MemoryFlagRAM', 0n, BigInt('0xFFFFFF')) ">-</button>
 	<datalist id="MemoryFlagRAMTables">
 	<option value="7FAD49">Default RAM address</option>
 	<option value="4001B9">Default RAM address (SA-1)</option>
 	</datalist><br>
 	Number of group-128s = <input type="number" onchange="Calculate()" value="2" min="1" max="16" id="NumberOfGroup128"><br>
-	<kbd>!Freeram_KeyCounter = </kbd>$<input type="text" onchange="Calculate()" value="7FAD79" id="Freeram_KeyCounter" list="KeyCounters"><button onclick="BigintIncreaseDecreaseHexInput(1n, 'Freeram_KeyCounter', 0n, BigInt('0xFFFFFF')) ">+</button><button onclick="BigintIncreaseDecreaseHexInput(-1n, 'Freeram_KeyCounter', 0n, BigInt('0xFFFFFF')) ">-</button>
+	<kbd>!Freeram_MBCM16_KeyCounter = </kbd>$<input type="text" onchange="Calculate()" value="7FAD79" id="Freeram_KeyCounter" list="KeyCounters"><button onclick="BigintIncreaseDecreaseHexInput(1n, 'Freeram_KeyCounter', 0n, BigInt('0xFFFFFF')) ">+</button><button onclick="BigintIncreaseDecreaseHexInput(-1n, 'Freeram_KeyCounter', 0n, BigInt('0xFFFFFF')) ">-</button>
 	<datalist id="KeyCounters">
 	<option value="7FAD79">Default RAM address</option>
 	<option value="4001E9">Default RAM address (SA-1)</option>
@@ -102,16 +102,16 @@
 		Output += "<table>"
 		Output += "<tr><th colspan='2'>Total size and entire range</th></tr>"
 		Output += "<tr>"
-		Output += "<td><kbd>!Freeram_MemoryFlagRAM</kbd> range:</td>"
-		Output += "<td><kbd>$" + MemoryFlagRAM.toString(16).toUpperCase() + "</kbd> to <kbd>$" + (MemoryFlagRAM+(NumberOfBytesOfMemoryFlagRAM-1n)).toString(16).toUpperCase() + "</kbd> (<kbd>!Freeram_MemoryFlagRAM</kbd> to <kbd>!Freeram_MemoryFlagRAM+$" + (NumberOfBytesOfMemoryFlagRAM-1n).toString(16).toUpperCase() + "</kbd>), <kbd>" + NumberOfBytesOfMemoryFlagRAM.toString(10) + "</kbd> bytes</td>"
+		Output += "<td><kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd> range:</td>"
+		Output += "<td><kbd>$" + MemoryFlagRAM.toString(16).toUpperCase() + "</kbd> to <kbd>$" + (MemoryFlagRAM+(NumberOfBytesOfMemoryFlagRAM-1n)).toString(16).toUpperCase() + "</kbd> (<kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd> to <kbd>!Freeram_MBCM16_MemoryFlagRAM+$" + (NumberOfBytesOfMemoryFlagRAM-1n).toString(16).toUpperCase() + "</kbd>), <kbd>" + NumberOfBytesOfMemoryFlagRAM.toString(10) + "</kbd> bytes</td>"
 		Output += "</tr>"
 		Output += "<tr>"
 		Output += "<td>Flag numbering range:</td>"
 		Output += "<td><kbd>0</kbd> to <kbd>" + (TotalNumberOfBitsOfMemoryFlagRAM-1n).toString(10) + "</kbd> (<kbd>$0</kbd> to <kbd>$" + (TotalNumberOfBitsOfMemoryFlagRAM-1n).toString(16).toUpperCase() + "</kbd>, <kbd>" + TotalNumberOfBitsOfMemoryFlagRAM.toString(10) + "</kbd> bits)</td>"
 		Output += "</tr>"
 		Output += "<tr>"
-		Output += "<td><kbd>!Freeram_KeyCounter</kbd> range</td>"
-		Output += "<td><kbd>$" + KeyCounterRAM.toString(16).toUpperCase() + "</kbd> to <kbd>$" + (KeyCounterRAM+(NumberOfKeyCounters-1n)).toString(16).toUpperCase() + "</kbd> (<kbd>!Freeram_KeyCounter</kbd> to <kbd>!Freeram_KeyCounter+$" + (NumberOfKeyCounters-1n).toString(16).toUpperCase() + "</kbd>), <kbd>" + NumberOfKeyCounters.toString(10) + "</kbd> bytes)</td>"
+		Output += "<td><kbd>!Freeram_MBCM16_KeyCounter</kbd> range</td>"
+		Output += "<td><kbd>$" + KeyCounterRAM.toString(16).toUpperCase() + "</kbd> to <kbd>$" + (KeyCounterRAM+(NumberOfKeyCounters-1n)).toString(16).toUpperCase() + "</kbd> (<kbd>!Freeram_MBCM16_KeyCounter</kbd> to <kbd>!Freeram_MBCM16_KeyCounter+$" + (NumberOfKeyCounters-1n).toString(16).toUpperCase() + "</kbd>), <kbd>" + NumberOfKeyCounters.toString(10) + "</kbd> bytes)</td>"
 		Output += "</tr>"
 		Output += "</table><br>"
 		if (NumberOfGroup128 >= 2n) {
@@ -122,7 +122,7 @@
 			for (GroupCount = 0n; GroupCount < NumberOfGroup128; GroupCount++) {
 				Output += "<tr>"
 				Output += "<td>Group <kbd>$" + GroupCount.toString(16).toUpperCase() + "</kbd></td>"
-				Output += "<td><kbd>$" + (MemoryFlagRAM+(GroupCount*16n)).toString(16).toUpperCase() + "</kbd> to <kbd>$" + (MemoryFlagRAM+((GroupCount*16n)+15n)).toString(16).toUpperCase() + "</kbd> (<kbd>!Freeram_MemoryFlagRAM+$" + (GroupCount*16n).toString(16).toUpperCase() + "</kbd> to <kbd>!Freeram_MemoryFlagRAM+$" + ((GroupCount*16n)+15n).toString(16).toUpperCase()  + "</kbd>)</td>"
+				Output += "<td><kbd>$" + (MemoryFlagRAM+(GroupCount*16n)).toString(16).toUpperCase() + "</kbd> to <kbd>$" + (MemoryFlagRAM+((GroupCount*16n)+15n)).toString(16).toUpperCase() + "</kbd> (<kbd>!Freeram_MBCM16_MemoryFlagRAM+$" + (GroupCount*16n).toString(16).toUpperCase() + "</kbd> to <kbd>!Freeram_MBCM16_MemoryFlagRAM+$" + ((GroupCount*16n)+15n).toString(16).toUpperCase()  + "</kbd>)</td>"
 				Output += "<td><kbd>" + (GroupCount*128n).toString(10) + "</kbd> to <kbd>" + ((GroupCount*128n)+127n).toString(10) + "</kbd> (<kbd>$" + (GroupCount*128n).toString(16).toUpperCase() + "</kbd> to <kbd>$" + ((GroupCount*128n)+127n).toString(16).toUpperCase() + "</kbd>)</td>"
 				Output += "</tr>"
 			}
@@ -134,7 +134,7 @@
 		Output += "<table>"
 		Output += "<tr><th colspan='2'>RAM addresses</th><th colspan='8'>Bit within each byte</th></tr>"
 		Output += "<tr>"
-		Output += "<th>Address of <kbd>!Freeram_MemoryFlagRAM</kbd></th>"
+		Output += "<th>Address of <kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd></th>"
 		Output += "<th>LM's <kbd>$7FC060</kbd> address</th>"
 		Output += "<th>Bit <kbd>7</kbd>"
 		Output += "<th>Bit <kbd>6</kbd>"
@@ -153,7 +153,7 @@
 				Output += "<tr><th colspan='10'>Group $" + (ByteIndexCount/16n).toString(16).toUpperCase() + "</th></tr>"
 			}
 			Output += "<tr>"
-			Output += "<td><kbd>$" + (MemoryFlagRAM+ByteIndexCount).toString(16).toUpperCase() + "</kbd> (<kbd>!Freeram_MemoryFlagRAM+$" + ByteIndexCount.toString(16).toUpperCase() + "</kbd>)</td>"
+			Output += "<td><kbd>$" + (MemoryFlagRAM+ByteIndexCount).toString(16).toUpperCase() + "</kbd> (<kbd>!Freeram_MBCM16_MemoryFlagRAM+$" + ByteIndexCount.toString(16).toUpperCase() + "</kbd>)</td>"
 			Output += "<td><kbd>$" + (8372320n+(ByteIndexCount % 16n)).toString(16).toUpperCase() + "</kbd></td>"
 			Output += "<td>Flag: <kbd>$" + ((ByteIndexCount * 8n)+7n).toString(16).toUpperCase() + "</kbd><br> LM: <kbd>$" + (((ByteIndexCount % 16n) * 8n)+7n).toString(16).toUpperCase() + "</kbd></td>"
 			Output += "<td>Flag: <kbd>$" + ((ByteIndexCount * 8n)+6n).toString(16).toUpperCase() + "</kbd><br> LM: <kbd>$" + (((ByteIndexCount % 16n) * 8n)+6n).toString(16).toUpperCase() + "</kbd></td>"
@@ -175,8 +175,8 @@
 		Output2 += "<h3>SRAM/BWRAM plus</h3>"
 		
 		Output2 += "<table><tr><td><pre>"
-		Output2 += "	dl $" + KeyCounterRAM.toString(16).toUpperCase() + " : dw " + NumberOfKeyCounters.toString(10) + "	;&gt;!Freeram_KeyCounter<br>"
-		Output2 += "	dl $" + MemoryFlagRAM.toString(16).toUpperCase() + " : dw " + NumberOfBytesOfMemoryFlagRAM.toString(10) + "	;&gt;!Freeram_MemoryFlagRAM<br>"
+		Output2 += "	dl $" + KeyCounterRAM.toString(16).toUpperCase() + " : dw " + NumberOfKeyCounters.toString(10) + "	;&gt;!Freeram_MBCM16_KeyCounter<br>"
+		Output2 += "	dl $" + MemoryFlagRAM.toString(16).toUpperCase() + " : dw " + NumberOfBytesOfMemoryFlagRAM.toString(10) + "	;&gt;!Freeram_MBCM16_MemoryFlagRAM<br>"
 		Output2 += "	;[...]<br>"
 		var PlaceHolderLoopCount = 0n
 		var SRAMBWRAM_TableFiller = "00000000"

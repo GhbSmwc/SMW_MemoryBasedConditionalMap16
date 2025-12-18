@@ -55,9 +55,9 @@
 <center><h1>Memory-based Conditional map 16 blocks</h1></center>
 <h2>Introduction</h2>
 
-<p>This ASM resource allows you to have more than 128 bit flags in your entire game. It is done by instead of storing the &ldquo;disappeared&rdquo; or &ldquo;used-up&rdquo; bit directly into Lunar Magic's Conditional Map16 bit flags at
-RAM <kbd>$7FC060~$7FC06F</kbd>, it instead writes to freeram (<kbd>!Freeram_MemoryFlagRAM</kbd>) where it is saved. This freeram can take an arbitrary size (ranging from 16 to 256 bytes of storage). When a level utilizing this resource
-loads, it transfers a portion of the freeram, 16 bytes of it, to <kbd>$7FC060~$7FC06F</kbd>.</p>
+<p>This ASM resource allows you to have more than 128 bit flags in your entire game (up to 2048 flags). It is done by instead of storing the &ldquo;disappeared&rdquo; or &ldquo;used-up&rdquo; bit directly into Lunar Magic's Conditional Map16 (CM16) bit flags at
+RAM <kbd>$7FC060~$7FC06F</kbd>, it instead writes to freeram (<kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd>) where it is saved. This freeram can take an arbitrary size (ranging from 16 to 256 bytes of storage). When a level utilizing this resource
+loads, it transfers a portion of the freeram, 16 bytes of it, to <kbd>$7FC060~$7FC06F</kbd>, causing blocks using the CM16 flags to appear/disappear, or to change one of the 2 blocks.</p>
 
 <p>As a bonus, this ASM resource does not need duplicate blocks on the map16 editor to tell what specific flag they are associated to. Instead, they search through a list of levels, what layer, and what
 index of <a href="https://smwc.me/m/smw/ram/7EC800"><kbd>$C800</kbd></a> to determine what flag number they should set (if not found, will output a value of <kbd>$FFFE</kbd> to indicate not found,
@@ -85,7 +85,7 @@ they control access to another point.)</li></ul>
 
 <h2>Useful stuff provided here</h2>
 <ul>
-<li>I made a <a href="Readme_files/JS_MemoryCalculator.html" id="MemoryCalculator">Javascript tool</a> that displays the memory statistics, what flag number is in what byte (or what RAM address its located), and
+<li>I made a <a href="Readme_files/JS_MemoryCalculator2.html" id="MemoryCalculator2">Javascript tool</a> that displays the memory statistics, what flag number is in what byte (or what RAM address its located), and
 what flag gets written to what flag in <kbd>$7FC060</kbd>, good for debugging among other things.</li>
 <li>For debugging and dealing with bitwise values, I've provided a fast and easy <a href="Readme_files/JS_HexBinary.html" id="HexBinary">simple converter</a> between hex and binary.</li>
 </ul>
@@ -96,10 +96,10 @@ what flag gets written to what flag in <kbd>$7FC060</kbd>, good for debugging am
 
 <p>I've included a sample level (for level 105) demonstrating the key blocks, along with sample ASM tables (what flags the blocks should be using and what group-128 to use in level 105).</p>
 
-<p>If you are using this on SA-1, LM version 3.10 (September 24, 2019) and before it, they have a bug <a href="https://smwc.me/1522106">I've reported</a> that causes blocks to fail to spawn (or spawn when it shouldn't (never experienced this))
+<p><s>If you are using this on SA-1, LM version 3.10 (September 24, 2019) and before it, they have a bug <a href="https://smwc.me/1522106">I've reported</a> that causes blocks to fail to spawn (or spawn when it shouldn't (never experienced this))
 even when <kbd>$7FC060-$7FC06F</kbd> bits are set (or clear) on certain emulators. This is due to the fact that level load code is processed under SA-1, so WRAM (<kbd>$7Exxxx</kbd> and <kbd>$7Fxxxx</kbd>) access
 <abbr title="Certain emulators, like ZMZ would allow SA-1 to access WRAM as they &ldquo;read&rdquo; the instructions, which the real SNES (and accurate emulators, like BSNES+) doesn't do. ">will not work</abbr>. So
-don't use this ASM resource on an SA-1 hack using LMv3.10 (or any previous LM versions), as blocks may appear (or not) incorrectly can occur on certain emulators.<br><br>
+don't use this ASM resource on an SA-1 hack using LMv3.10 (or any previous LM versions), as blocks may appear (or not) incorrectly can occur on certain emulators.</s><br><br>
 
 EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 <h2>Insertion</h2>
@@ -108,19 +108,25 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		<p>Freerams and tables:</p>
 		<ol>
 			<li>
-				<p>Because the blocks check their locations and level numbers, you must open these files:</p>
+				<p>Because the blocks check their locations and level numbers, you must open these files with a text editor and edit:</p>
 				<ul>
-					<li><kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>, this determines what group-128 to use for each level using the MBCM16. See the stuff under label <kbd>.LevelList</kbd>.</li>
-					<li><kbd>UberasmTool/Library/MBCM16DisplayKeyCounter</kbd>, this displays the key counter on the heads-up display (HUD) of how many keys of a particular level.</li>
-					<li><kbd>CustomBlocks/routines/SearchBlockFlagIndex.asm</kbd>, blocks' routine to find out what flag they are.</li>
-					<li><kbd>CustomBlocks/routines/GetWhatKeyCounter</kbd>, blocks' routine to find what key to use.</li>
+					<li>
+						<kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>, this determines what group-128 to use for each level using the MBCM16. See the stuff under label <kbd>.LevelList</kbd>
+						(make sure you read the comments!).
+					</li>
+					<li><kbd>UberasmTool/Library/MBCM16DisplayKeyCounter</kbd>, this displays the key counter on the heads-up display (HUD) of how many keys of a particular level. This does not support sprite status bar patches.</li>
+					<li><kbd>CustomBlocks/routines/SearchBlockFlagIndex.asm</kbd>, this is a routine that searches for what index matches with the block being touched, to determine what flag the block to set/reset so it doesn't respawn on level (re)load.</li>
+					<li>
+						<kbd>CustomBlocks/routines/GetWhatKeyCounter</kbd>, blocks' routine to find what key counter to use (this system supports separate key counters, akin to most <i>Zelda</i> games since <i>A Link to the Past</i> that you cannot use a small key
+						from one dungeon in another).
+					</li>
 				</ul>
 				<p>These contains a list of level numbers, block location within level and group numbers (times <kbd>$10</kbd>), and what key counter for the level to use.
 				Comments should fully explained how each table correspond. Even better is that the JS tool (linked previously) also print out placeholder template tables (with comments
 				pointing of each item and their flag numbers/Level ID) for you to copy.</p>
 				
-				<li>Open <kbd>FlagMemoryDefines/Defines.asm</kbd> and edit <kbd>!Freeram_MemoryFlag</kbd> if you find RAM conflicts with another ASM resource. I highly
-				recommend make note as (including before and after) you insert any patches (including third party) so it is easier to keep track of. There's also other settings you
+				<li>Open <kbd>FlagMemoryDefines/Defines.asm</kbd> and change any define that are <kbd>!Freeram_&lt;Name_here&gt;</kbd> setting if you find RAM conflicts with another ASM resource (including itself). I highly
+				recommend make note as (including before and after) you insert any patches (including third party) so it is easier to keep track of (I made a <a href="https://www.smwcentral.net/?p=section&a=details&id=39887">javascript tool that tracks this</a>). There's also other settings you
 				can play around with. Also, this assumes you are using the super status bar patch, if you are not using that and/or using other patches, adjust the defines under &ldquo;<kbd>HUD stuff</kbd>&rdquo;.</li>
 			</li>
 		</ol>
@@ -129,9 +135,9 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		Using SRAM/BWRAM plus patch.
 		<ol>
 			<li>
-				<p>Open either SRAM or BWRAM plus depending on if your hack is SA-1 or not. Now again, using the JS tool, copy the given ASM tables from an obviously named
-				section and paste them accordingly. Remember that the order in table and defaults must match (the first <kbd>dl $xxxxxx : dw $yyyy</kbd> goes to the first group of bytes
-				in &ldquo;<kbd>defaults</kbd>&rdquo;, second on second, and so on). Remember that this is the default value they would be when you start a new game.</p>
+				<p>Open either SRAM or BWRAM plus depending on if your hack is SA-1 or not. Using <a href="Readme_files/JS_MemoryCalculator2.html" id="JS_MemoryCalculator2_SRAMBwram">this JS tool</a>, copy the given ASM tables from an obviously named
+				section of the output and paste them accordingly. Remember that the order in table and defaults must match (the first <kbd>dl $xxxxxx : dw $yyyy</kbd> goes to the first group of bytes
+				in &ldquo;<kbd>defaults</kbd>&rdquo;, second on second, and so on). Remember that this is the default value they would be when you start a new game (and if you have saved the game, make sure you start a new file or erase the old saved data).</p>
 				
 				<p>Keep in mind about LM's CM16:</p>
 				<ul>
@@ -159,7 +165,7 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		<p>Uberasm tool insertion</p>
 		<ol>
 			<li>
-				<p><sup><font color="yellow">[Return later]</font></sup>In any level that are using the flags, create/edit a .asm file (like <kbd>Level105.asm</kbd>), in that file, paste this code:
+				<p><sup><font color="yellow">[Return later]</font></sup>In any level that are using the flags, create/edit a <kbd>.asm</kbd> file (like <kbd>Level105.asm</kbd>), in that file, paste this code:
 <table><tr><td><pre>
 	incsrc "../FlagMemoryDefines/Defines.asm"
 	
@@ -170,19 +176,19 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 	RTL
 main:
 	;Display key counter on the HUD (during the level at play)
-	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_KeyCounter.
+	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_MBCM16_KeyCounter.
 	JSL MBCM16DisplayKeyCounter_DisplayHud
 	;[...]
 	RTL
 init:
 	;Display key counter on the HUD (during screen fading into the level)
-	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_KeyCounter.
+	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_MBCM16_KeyCounter.
 	JSL MBCM16DisplayKeyCounter_DisplayHud
 	;[...]
 	RTL
 </pre></td></tr></table>
-				What will happen is when the level loads, <kbd>$7FC060</kbd> is now written from <kbd>!Freeram_MemoryFlag+(&lt;Group_Number&gt;*$10)</kbd> to
-				<kbd>!Freeram_MemoryFlag+((&lt;Group_Number&gt;*$10)+$0F)</kbd>. Group number is found in <kbd>.OneHundredTwentyEightFlagGroupList</kbd>
+				What will happen is when the level loads, <kbd>$7FC060</kbd> is now written from <kbd>!Freeram_MBCM16_MemoryFlag+(&lt;Group_Number&gt;*$10)</kbd> to
+				<kbd>!Freeram_MBCM16_MemoryFlag+((&lt;Group_Number&gt;*$10)+$0F)</kbd>. Group number is found in <kbd>.OneHundredTwentyEightFlagGroupList</kbd>
 				in <kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>. This also displays the key counter (or write blank tile <kbd>$FC</kbd> if you don't have any)
 				on the status bar/HUD.</p>
 			</li>
@@ -198,16 +204,16 @@ init:
 			<p>Copy the list of blocks in <kbd>Blocks/list.txt</kbd> and paste it in GPS's list file. You may need to edit their map16 number (or ID number).</p>
 		</li>
 		<li>
-			<p>Copy and paste the block and routine ASM files, their folders should have obvious names to know where to put.</p>
+			Copy and paste the block and routine ASM files, their folders should have obvious names to know where to put.
 			<ul>
 				<li>
-					<p><sup><font color="yellow">[Return later]</font></sup> Make sure you edit the tables in <kbd>GetWhatKeyCounter.asm</kbd> and <kbd>SearchBlockFlagIndex.asm</kbd>
+					<sup><font color="yellow">[Return later]</font></sup> Make sure you edit the tables in <kbd>GetWhatKeyCounter.asm</kbd> and <kbd>SearchBlockFlagIndex.asm</kbd>
 					to give it the level number, the layer it is on, its block location and what key counter the blocks should read on a given level number. For block location, If dealing with multiple
-					blocks in a group, such as the locked gates and doors, refer <a href="#TopLeftGroup" id="BlockInsertTables">here</a> that it uses their top-leftmost block.</p>
+					blocks in a group, such as the locked gates and doors, refer <a href="#TopLeftGroup" id="BlockInsertTables">here</a> that it uses their top-leftmost block.<br><br>
 					
-					<p>You can set it to write on ANY flag number here if you want other blocks to disappear/appear/change in the other level, regardless of the group number the current level
+					You can set it to write on ANY flag number here if you want other blocks to disappear/appear/change in the other level, regardless of the group number the current level
 					is set to, unlike the limitation to a range of 128 bits. Just avoid using the <kbd>%SearchBlockFlagIndex()</kbd> and <kbd>%GetWhatKeyCounter()</kbd> routines as they
-					lookup the current level.</p>
+					lookup the current level.
 				</li>
 			</ul>
 		</li>
@@ -221,14 +227,14 @@ init:
 			Graphics
 			<ol>
 				<li>
-					<p>Create the Exgraphics and Graphics folder by pressing &ldquo;Quick Extract GFX from ROM&rdquo; and &ldquo;Quick Extract ExGFX from ROM&rdquo;
-					(red and blue mushroom) if you haven't done so already.</p>
+					Create the Exgraphics and Graphics folder by pressing &ldquo;Quick Extract GFX from ROM&rdquo; and &ldquo;Quick Extract ExGFX from ROM&rdquo;
+					(red and blue mushroom) if you haven't done so already.
 				</li>
 				<li>
-					<p>Then paste these files, they should have obvious names, however, for <kbd>GFX28.bin</kbd> (status bar tiles), you can either replace the original
+					Then paste these files, they should have obvious names, however, for <kbd>GFX28.bin</kbd> (status bar tiles), you can either replace the original
 					with that in the &ldquo;Graphics&rdquo; folder, or rename it <kbd>ExGFXYY</kbd> where <kbd>YY</kbd> is the hexadecimal number of what slot you
 					want to insert to (and to use it in a level, it must be on LG1). Now insert the graphics by pressing &ldquo;Quick Insert GFX and ExGFX to ROM, reload graphics&rdquo;
-					(yellow mushroom with a red left arrow).</p>
+					(yellow mushroom with a red left arrow).
 				</li>
 			
 			</ol>
@@ -263,14 +269,14 @@ init:
 					<p>Small and a normal-sized doors included, you don't have to create a copy and edit the settings to make a small door.</p>
 				</li>
 				<li>
-					<p><sup><font color="yellow">[Return later]</font></sup>Also every time you place these memorized blocks, is that you must select them (all within the group if
+					<sup><font color="yellow">[Return later]</font></sup>Also every time you place these memorized blocks, is that you must select them (all within the group if
 					multi-blocks like the locked gates), then give them their conditional map16 flags by <kbd>Menubar</kbd> &rightarrow;
 					<kbd>Edit</kbd> &rightarrow; <kbd>Conditional Direct Map16...</kbd>, otherwise they'll keep reappearing every level
-					load.</p>
+					load.<br><br>
 					
-					<p>What LMCM16 flag number you should put down is the flag number of <kbd>!Freeram_MemoryFlag</kbd>, MOD 128. For example:<br>
+					What LMCM16 flag number you should put down is the flag number of <kbd>!Freeram_MBCM16_MemoryFlag</kbd>, MOD 128. For example:<br>
 					<table>
-					<tr><th>Flag number of <kbd>!Freeram_MemoryFlag</kbd></th><th>LM's flag number</th></tr>
+					<tr><th>Flag number of <kbd>!Freeram_MBCM16_MemoryFlag</kbd></th><th>LM's flag number</th></tr>
 					<tr><td>$000 (Group 0)</td><td>$00</td></tr>
 					<tr><td>$001 (Group 0)</td><td>$01</td></tr>
 					<tr><td>$002 (Group 0)</td><td>$02</td></tr>
@@ -289,13 +295,13 @@ init:
 					<tr><td>...</td><td>...</td></tr>
 					</table><br>
 					Also remember that up to 128 different flag numbers can be used per level, this means, for example if you end up with one level
-					using 128 flag numbers (<kbd>$00-$7F</kbd>), you'll need to use another level to use additional flags.</p>
+					using 128 flag numbers (<kbd>$00-$7F</kbd>), you'll need to use another level to use additional flags.<br><br>
 					
-					<p>Remember, when the level loads, what group-128 to use to write to $7FC060 is specified in <kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>.
-					With the previously mentioned paragraph, when you choose any group-128, you are bounded to a range of what flag numbers of <kbd>!Freeram_MemoryFlag</kbd> to use:<br>
+					When the level loads, what group-128 to use to write to $7FC060 is specified in <kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>.
+					With the previously mentioned paragraph, when you choose any group-128, you are bounded to a range of what flag numbers of <kbd>!Freeram_MBCM16_MemoryFlag</kbd> to use:<br>
 					[<kbd>LowestFlagNumber = GroupNumber * 128</kbd>] to [<kbd>HighestFlagNumber = (GroupNumber * 128) + 127</kbd>]<br>
 					For example, if level <kbd>$105</kbd> uses group <kbd>$0</kbd>, only flags <kbd>$0-$7F</kbd> are available in that level, if level <kbd>$1CB</kbd> uses group <kbd>$1</kbd>,
-					only flags <kbd>$80-$FF</kbd> are available.</p>
+					only flags <kbd>$80-$FF</kbd> are available.
 				</li>
 			</ol>
 		</li>
@@ -307,30 +313,30 @@ init:
 		If you're unsure if you had set up the flag and level tables correctly I have some protips:
 		<ul>
 			<li>
-				<p>Use the block <kbd>Template_PermaDisappear.asm</kbd>, place it in the level, and touch it. If it doesn't disappear in a puff of smoke, then
-				that block location isn't assigned to a flag number. You can use other blocks, they will simply do nothing if it doesn't find its location associated to a flag number.</p>
+				Use the block <kbd>Template_PermaDisappear.asm</kbd>, place it in the level, and touch it. If it doesn't disappear in a puff of smoke, then
+				that block location isn't assigned to a flag number. You can use other blocks, they will simply do nothing if it doesn't find its location associated to a flag number.
 			</li>
 			<li>
-				<p>If the block do function but keeps respawning on level load, then that means there is something wrong with the following:</p>
+				If the block do function but keeps respawning on level load, then that means there is something wrong with the following:
 				<ul>
 					<li>
-						<p><kbd>MBCM16WriteGroup128To7FC060.asm</kbd> (uberasm tool library) isn't set up correctly, set to use the wrong level number, wrong group-128, wrong layer, and/or wrong block C800 positions.</p>
+						<kbd>MBCM16WriteGroup128To7FC060.asm</kbd> (uberasm tool library) isn't set up correctly, set to use the wrong level number, wrong group-128, wrong layer, and/or wrong block C800 positions.
 					</li>
 					<li>
-						<p>You must've set the block to the wrong flag number that is assigned.</p>
+						You must've set the block to the wrong flag number that is assigned.
 					</li>
 				</ul>
-				<p>Otherwise if another block in the same level disappears, then you've set the block to the same flag number. This is correct for multi-block gates bigger than a 1x1 block
+				Otherwise if another block in the same level disappears, then you've set the block to the same flag number. This is correct for multi-block gates bigger than a 1x1 block
 				so that the whole door remains gone when unlocked and level refreshes, however if 2+ separate things in the same level uses the same $7FC060 flag number, then both are affected,
-				which any of them have been set to the wrong flag.</p>
+				which any of them have been set to the wrong flag.
 			</li>
 		</ul>
 	</li>
 	<li>
-		<p>You may be asking the question, why does the game lag if the player tries to activate these blocks when they aren't assigned to the list? This is because each frame and each of the player's collision point
+		You may be asking the question, why does the game lag if the player tries to activate these blocks when they aren't assigned to the list? This is because each frame and each of the player's collision point
 		touches the block, it has to search a long list of flag numbers (and fail to find the matching entry), which tanks the game's performance (a loop with huge number of iterations). The longer the list, the
 		harder the game will slow down. However, if your entire hack does not contain any non-listed MBCM16 blocks (which your hack <u>should</u> have all of them be listed), you shouldn't worry, since the blocks
-		execute for only 1 frame for a listed MBCM16 block the moment the block disappears.</p>
+		execute for only once for one frame for a listed MBCM16 block the moment the block disappears.
 		
 		<ul>
 			<li>
@@ -340,11 +346,11 @@ init:
 		</ul>
 	</li>
 	<li>
-		<p>When the player enters an exit-enabled locked door (or, in general, teleport to another level), the key counter on the HUD (heads-up display) will not update until the level the player is heading to is loaded. This is because during
-		level transition, the HUD no longer update the tiles every frame.</p>
+		When the player enters an exit-enabled locked door (or, in general, teleport to another level), the key counter on the HUD (heads-up display) will not update until the level the player is heading to is loaded. This is because during
+		level transition, the HUD no longer update the tiles every frame.
 	</li>
 	<li>
-		<p>You don't have to have all flags to be permanently cleared/set, if you want some levels to only reset them when the player goes to the overworld map via dying, START+SELECT, and beating the level. Just have an ASM file created into uberasm
+		You don't have to have all flags to be permanently cleared/set, if you want some levels to only reset them when the player goes to the overworld map via dying, START+SELECT, and beating the level. Just have an ASM file created into uberasm
 		tool's gamemode folder to be called on the <kbd>list.txt</kbd> as gamemode <kbd>0D</kbd> (overworld fade-in) or <kbd>0E</kbd> (overworld). I would prefer having this under <kbd>init:</kbd> because it is not necessary to &ldquo;reset&rdquo;
 		them every frame on the map (reset in quotes, because, as in to restore their original values, not always have them all zero on all flags):
 <table><tr><td><pre>
@@ -377,10 +383,9 @@ If you happen to have a byte that contains flags that shouldn't be reverted whil
 </pre></td></tr></table><br>
 And don't forget, if you are resetting the locked gates and locked doors, you MUST also reset the key counters too, otherwise the locked gates and doors will respawn and the key counter is retained with them also respawning in the level:
 <table><tr><td><pre>	LDA #$00
-	STA !Freeram_KeyCounter
-	STA !Freeram_KeyCounter+1
+	STA !Freeram_MBCM16_KeyCounter
+	STA !Freeram_MBCM16_KeyCounter+1
 	;[...]</pre></td></tr></table>
-</p>
 	</li>
 </ul>
 <h2>Credits</h2>
@@ -388,3 +393,35 @@ And don't forget, if you are resetting the locked gates and locked doors, you MU
 <li><a href="https://stackoverflow.com/a/8083480/11030779">Stack Overflow on the font for inputs</a>.</li>
 <li><a href="https://www.smwcentral.net/?p=profile&id=22951">MarioFanGamer</a> for the <a href="https://www.smwcentral.net/?p=section&a=details&id=21130">door blocks.</a></li>
 </ul>
+
+<script>
+//These makes all <pre>...</pre> have an effect that double-clicking will select all the text
+//in it, to make it easy to copy code and paste it in your ASM stuff.
+//
+//Credit:
+// https://keestalkstech.com/2014/04/click-to-select-all-on-the-pre-element/
+// https://www.sanwebe.com/2014/04/select-all-text-in-element-on-click
+document.addEventListener('dblclick', e => {
+  let pre = getClosest(e.target, "PRE");
+  if (pre && e.ctrlKey) {
+    let range = new Range();
+    range.selectNodeContents(pre);
+    document.getSelection().removeAllRanges();
+    document.getSelection().addRange(range);
+  }
+});
+
+function getClosest(el, tagName) {
+  tagName = tagName && tagName.toUpperCase();
+
+  if (!tagName || !el)
+    return null;
+
+  do
+    if (el.nodeName === tagName)
+      return el;
+  while (el = el.parentNode);
+
+  return null;
+}
+</script>
