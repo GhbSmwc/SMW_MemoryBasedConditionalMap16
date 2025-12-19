@@ -56,8 +56,9 @@
 <h2>Introduction</h2>
 
 <p>This ASM resource allows you to have more than 128 bit flags in your entire game (up to 2048 flags). It is done by instead of storing the &ldquo;disappeared&rdquo; or &ldquo;used-up&rdquo; bit directly into Lunar Magic's Conditional Map16 (CM16) bit flags at
-RAM <kbd>$7FC060~$7FC06F</kbd>, it instead writes to freeram (<kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd>) where it is saved. This freeram can take an arbitrary size (ranging from 16 to 256 bytes of storage). When a level utilizing this resource
-loads, it transfers a portion of the freeram, 16 bytes of it, to <kbd>$7FC060~$7FC06F</kbd>, causing blocks using the CM16 flags to appear/disappear, or to change one of the 2 blocks.</p>
+RAM <kbd>$7FC060~$7FC06F</kbd>, it instead writes to freeram (<kbd>!Freeram_MBCM16_MemoryFlag</kbd>) where it is saved. This freeram can take an arbitrary size (ranging from 16 to 256 bytes of storage). When a level utilizing this resource
+loads, it transfers a portion of the freeram, 16 bytes of it, to <kbd>$7FC060~$7FC06F</kbd>, causing blocks using the CM16 flags to appear/disappear, or to change one of the 2 blocks. Note that this still mean you can have up to 128 bit flags
+per level.</p>
 
 <p>As a bonus, this ASM resource does not need duplicate blocks on the map16 editor to tell what specific flag they are associated to. Instead, they search through a list of levels, what layer, and what
 index of <a href="https://smwc.me/m/smw/ram/7EC800"><kbd>$C800</kbd></a> to determine what flag number they should set (if not found, will output a value of <kbd>$FFFE</kbd> to indicate not found,
@@ -105,14 +106,14 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 <h2>Insertion</h2>
 <ol>
 	<li>
-		<p>Freerams and tables:</p>
+		Freerams and tables:
 		<ol>
 			<li>
-				<p>Because the blocks check their locations and level numbers, you must open these files with a text editor and edit:</p>
+				Because the blocks check their locations and level numbers, you must open these files with a text editor and edit:
 				<ul>
 					<li>
-						<kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>, this determines what group-128 to use for each level using the MBCM16. See the stuff under label <kbd>.LevelList</kbd>
-						(make sure you read the comments!).
+						<kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>, this determines what what section of RAM defined as <kbd>!Freeram_MBCM16_MemoryFlag</kbd>, (referred to as &ldquo;group-128&rdquo;) to use for each level using the MBCM16.
+						See the stuff under label <kbd>.LevelList</kbd> (make sure you read the comments!).
 					</li>
 					<li><kbd>UberasmTool/Library/MBCM16DisplayKeyCounter</kbd>, this displays the key counter on the heads-up display (HUD) of how many keys of a particular level. This does not support sprite status bar patches.</li>
 					<li><kbd>CustomBlocks/routines/MBCM16SearchBlockFlagIndex.asm</kbd>, this is a routine that searches for what index matches with the block being touched, to determine what flag the block to set/reset so it doesn't respawn on level (re)load.</li>
@@ -121,9 +122,9 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 						from one dungeon in another).
 					</li>
 				</ul>
-				<p>These contains a list of level numbers, block location within level and group numbers (times <kbd>$10</kbd>), and what key counter for the level to use.
+				These contains a list of level numbers, block location within level and group numbers (times <kbd>$10</kbd>), and what key counter for the level to use.
 				Comments should fully explained how each table correspond. Even better is that the JS tool (linked previously) also print out placeholder template tables (with comments
-				pointing of each item and their flag numbers/Level ID) for you to copy.</p>
+				pointing of each item and their flag numbers/Level ID) for you to copy.
 				
 				<li>Open <kbd>FlagMemoryDefines/Defines.asm</kbd> and change any define that are <kbd>!Freeram_&lt;Name_here&gt;</kbd> setting if you find RAM conflicts with another ASM resource (including itself). I highly
 				recommend make note as (including before and after) you insert any patches (including third party) so it is easier to keep track of (I made a <a href="https://www.smwcentral.net/?p=section&a=details&id=39887">javascript tool that tracks this</a>). There's also other settings you
