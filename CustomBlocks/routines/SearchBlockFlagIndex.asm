@@ -63,7 +63,8 @@ function GetC800IndexVertiLvl(XPos, YPos) = (512*(YPos/16))+(256*(XPos/16))+((YP
 	RTL
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;List of level numbers. This is essentially what level the flags are in.
+;List of level numbers the flag is used in. This is essentially what level
+;the flags are in.
 ;
 ;Note: you CAN have duplicate level numbers here if you have multiple flags
 ;in a single level.
