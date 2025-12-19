@@ -135,25 +135,25 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		Using SRAM/BWRAM plus patch.
 		<ol>
 			<li>
-				<p>Open either SRAM or BWRAM plus depending on if your hack is SA-1 or not. Using <a href="Readme_files/JS_MemoryCalculator2.html" id="JS_MemoryCalculator2_SRAMBwram">this JS tool</a>, copy the given ASM tables from an obviously named
+				Open either SRAM or BWRAM plus depending on if your hack is SA-1 or not. Using <a href="Readme_files/JS_MemoryCalculator2.html" id="JS_MemoryCalculator2_SRAMBwram">this JS tool</a>, copy the given ASM tables from an obviously named
 				section of the output and paste them accordingly. Remember that the order in table and defaults must match (the first <kbd>dl $xxxxxx : dw $yyyy</kbd> goes to the first group of bytes
-				in &ldquo;<kbd>defaults</kbd>&rdquo;, second on second, and so on). Remember that this is the default value they would be when you start a new game (and if you have saved the game, make sure you start a new file or erase the old saved data).</p>
+				in &ldquo;<kbd>defaults</kbd>&rdquo;, second on second, and so on). Remember that this is the default value they would be when you start a new game (and if you have saved the game, make sure you start a new file or erase the old saved data).<br><br>
 				
-				<p>Keep in mind about LM's CM16:</p>
+				Keep in mind about LM's CM16:
 				<ul>
 					<li>
-						<p>With &ldquo;Always show objects&rdquo; unchecked, if the flag is 0, it uses tile <kbd>$0025</kbd>, otherwise use the tile you've just placed down. If you want
+						With &ldquo;Always show objects&rdquo; unchecked, if the flag is 0, it uses tile <kbd>$0025</kbd>, otherwise use the tile you've just placed down. If you want
 						something to not exist but later in the game to appear forever, then you should default the flag to 0 and SET the bit on an event the player does something to make it appear.
 						To make it disappear and stays gone forever, you should default the flag to 1 and CLEAR the flag on an event the player does something to make it gone forever (such as
-						when the player picks up the key).</p>
+						when the player picks up the key).
 					</li>
 					<li>
-						<p>With &ldquo;Always show objects&rdquo; checked, if the flag is 0, it uses the tile you've placed down, otherwise it will use <kbd>Tile_Youve_Placed_Down+$0100</kbd> (example:
-						if you use tile <kbd>$0425</kbd>, it will use that tile when the flag is 0, otherwise it will use <kbd>$0<u>5</u>25</kbd>, which is the next map16 page keeping its low byte).</p>
+						With &ldquo;Always show objects&rdquo; checked, if the flag is 0, it uses the tile you've placed down, otherwise it will use <kbd>Tile_Youve_Placed_Down+$0100</kbd> (example:
+						if you use tile <kbd>$0425</kbd>, it will use that tile when the flag is 0, otherwise it will use <kbd>$0<u>5</u>25</kbd>, which is the next map16 page keeping its low byte).<br><br>
 						
-						<p>Seems only useful if you don't want to use tile <kbd>$0025</kbd>. To keep things organized when using both settings (&ldquo;Always show objects&rdquo; checked
+						Seems only useful if you don't want to use tile <kbd>$0025</kbd>. To keep things organized when using both settings (&ldquo;Always show objects&rdquo; checked
 						for some blocks and unchecked for others), I would recommend having all the default values in this table be set (<kbd>%11111111</kbd>) and always clear them when the
-						player triggers something, and have the intended &ldquo;inital&rdquo; block state on the second of the two map16 pages (<kbd>$0525</kbd> (inital) &rightarrow; <kbd>$0425</kbd> (block you place)).</p>
+						player triggers something, and have the intended &ldquo;inital&rdquo; block state on the second of the two map16 pages (<kbd>$0525</kbd> (inital) &rightarrow; <kbd>$0425</kbd> (block you place)).
 					</li>
 				</ul>
 				<p>Thus, you are not restricted to using all eight ones or all eight zeroes in the bytes.</p>
@@ -297,7 +297,7 @@ init:
 					Also remember that up to 128 different flag numbers can be used per level, this means, for example if you end up with one level
 					using 128 flag numbers (<kbd>$00-$7F</kbd>), you'll need to use another level to use additional flags.<br><br>
 					
-					When the level loads, what group-128 to use to write to $7FC060 is specified in <kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>.
+					When the level loads, what group-128 to use to write to <kbd>$7FC060</kbd> is specified in <kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>.
 					With the previously mentioned paragraph, when you choose any group-128, you are bounded to a range of what flag numbers of <kbd>!Freeram_MBCM16_MemoryFlag</kbd> to use:<br>
 					[<kbd>LowestFlagNumber = GroupNumber * 128</kbd>] to [<kbd>HighestFlagNumber = (GroupNumber * 128) + 127</kbd>]<br>
 					For example, if level <kbd>$105</kbd> uses group <kbd>$0</kbd>, only flags <kbd>$0-$7F</kbd> are available in that level, if level <kbd>$1CB</kbd> uses group <kbd>$1</kbd>,
