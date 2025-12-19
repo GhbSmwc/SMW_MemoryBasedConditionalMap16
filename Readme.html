@@ -115,9 +115,9 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 						(make sure you read the comments!).
 					</li>
 					<li><kbd>UberasmTool/Library/MBCM16DisplayKeyCounter</kbd>, this displays the key counter on the heads-up display (HUD) of how many keys of a particular level. This does not support sprite status bar patches.</li>
-					<li><kbd>CustomBlocks/routines/SearchBlockFlagIndex.asm</kbd>, this is a routine that searches for what index matches with the block being touched, to determine what flag the block to set/reset so it doesn't respawn on level (re)load.</li>
+					<li><kbd>CustomBlocks/routines/MBCM16SearchBlockFlagIndex.asm</kbd>, this is a routine that searches for what index matches with the block being touched, to determine what flag the block to set/reset so it doesn't respawn on level (re)load.</li>
 					<li>
-						<kbd>CustomBlocks/routines/GetWhatKeyCounter</kbd>, blocks' routine to find what key counter to use (this system supports separate key counters, akin to most <i>Zelda</i> games since <i>A Link to the Past</i> that you cannot use a small key
+						<kbd>CustomBlocks/routines/MBCM16GetWhatKeyCounter</kbd>, blocks' routine to find what key counter to use (this system supports separate key counters, akin to most <i>Zelda</i> games since <i>A Link to the Past</i> that you cannot use a small key
 						from one dungeon in another).
 					</li>
 				</ul>
@@ -207,12 +207,12 @@ init:
 			Copy and paste the block and routine ASM files, their folders should have obvious names to know where to put.
 			<ul>
 				<li>
-					<sup><font color="yellow">[Return later]</font></sup> Make sure you edit the tables in <kbd>GetWhatKeyCounter.asm</kbd> and <kbd>SearchBlockFlagIndex.asm</kbd>
+					<sup><font color="yellow">[Return later]</font></sup> Make sure you edit the tables in <kbd>MBCM16GetWhatKeyCounter.asm</kbd> and <kbd>MBCM16SearchBlockFlagIndex.asm</kbd>
 					to give it the level number, the layer it is on, its block location and what key counter the blocks should read on a given level number. For block location, If dealing with multiple
 					blocks in a group, such as the locked gates and doors, refer <a href="#TopLeftGroup" id="BlockInsertTables">here</a> that it uses their top-leftmost block.<br><br>
 					
 					You can set it to write on ANY flag number here if you want other blocks to disappear/appear/change in the other level, regardless of the group number the current level
-					is set to, unlike the limitation to a range of 128 bits. Just avoid using the <kbd>%SearchBlockFlagIndex()</kbd> and <kbd>%GetWhatKeyCounter()</kbd> routines as they
+					is set to, unlike the limitation to a range of 128 bits. Just avoid using the <kbd>%MBCM16SearchBlockFlagIndex()</kbd> and <kbd>%MBCM16GetWhatKeyCounter()</kbd> routines as they
 					lookup the current level.
 				</li>
 			</ul>
@@ -253,7 +253,7 @@ init:
 			<ol>
 				<li>
 					<p><sup><font color="yellow">[Return later]</font></sup><a href="#BlockInsertTables" id="TopLeftGroup">^</a>, Every time you place blocks in the level, you have to assign them to their respective flags, this involves
-					the frequent editing of <kbd>SearchBlockFlagIndex.asm</kbd>. While finding the level numbers and what layer
+					the frequent editing of <kbd>MBCM16SearchBlockFlagIndex.asm</kbd>. While finding the level numbers and what layer
 					they're on is easy, the block coordinate is displayed LM's status bar on the bottom-left corner of what block your mouse cursor is hovering:<br>
 					<img src="Readme_files/LM_BlockCoords.png"><br>
 					Note that on and after <kbd>Version 3.03 April 1, 2019</kbd>, the coordinates are displayed in hexadecimal numbers, before this, they were decimal.<br><br>

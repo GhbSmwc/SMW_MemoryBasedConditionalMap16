@@ -51,7 +51,7 @@ HeadInside:
 		BCC Done
 	endif
 ;don't do anything should you have 99 keys.
-	%GetWhatKeyCounter()					;>Get what counter based on what level.
+	%MBCM16GetWhatKeyCounter()					;>Get what counter based on what level.
 	BCS Done						;>Return if level not marked
 	TAX							;>Transfer to X.
 	LDA !Freeram_MBCM16_KeyCounter,x			;>Key counter
@@ -67,15 +67,15 @@ HeadInside:
 	STA $02				;/
 	SEP #$20
 	%BlkCoords2C800Index()
-	%SearchBlockFlagIndex()
+	%MBCM16SearchBlockFlagIndex()
 	REP #$20			;\If flag number associated with this block location not found, return.
 	CMP #$FFFE			;|
 	BEQ Done			;/
 	LSR				;>Convert to index number from Index*2.
 	SEP #$20
 	CLC
-	%WriteBlockFlagIndex()
-	%GetWhatKeyCounter()					;>Get what counter based on what level.
+	%MBCM16WriteBlockFlagIndex()
+	%MBCM16GetWhatKeyCounter()					;>Get what counter based on what level.
 	BCS Done						;>Return if level not marked
 	TAX							;>Transfer to X.
 	LDA !Freeram_MBCM16_KeyCounter,x			;>Key counter

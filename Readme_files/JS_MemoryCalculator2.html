@@ -112,8 +112,8 @@ item, else you would have to move the comments (starting from the area that you'
 	<div class="CodeBlock"><pre id="SRAMBWRAMOutput"></pre></div>
 </div>
 <div>
-	<h2>SearchBlockFlagIndex.asm (custom blocks routine)</h2>
-	<div class="CodeBlock"><pre id="SearchBlockFlagIndexOutput"></pre></div>
+	<h2>MBCM16SearchBlockFlagIndex.asm (custom blocks routine)</h2>
+	<div class="CodeBlock"><pre id="MBCM16SearchBlockFlagIndexOutput"></pre></div>
 </div>
 <div>
 	<h2>MBCM16WriteGroup128To7FC060.asm (uberasm tool)</h2>
@@ -312,7 +312,7 @@ item, else you would have to move the comments (starting from the area that you'
 			}
 			document.getElementById("SRAMBWRAMOutput").textContent = Text
 		}
-		//Generate SearchBlockFlagIndex.asm tables //SearchBlockFlagIndexOutput
+		//Generate MBCM16SearchBlockFlagIndex.asm tables //MBCM16SearchBlockFlagIndexOutput
 		{
 			let Text = ""
 			let LevelNumbersTableText = ""
@@ -366,7 +366,7 @@ item, else you would have to move the comments (starting from the area that you'
 ?GetFlagNumberC800IndexStart:\n`
 			Text += LevelCoordinateTableText
 			Text += "?GetFlagNumberC800IndexEnd:"
-			document.getElementById("SearchBlockFlagIndexOutput").textContent = Text
+			document.getElementById("MBCM16SearchBlockFlagIndexOutput").textContent = Text
 		}
 		//Generate MBCM16WriteGroup128To7FC060.asm tables
 		{

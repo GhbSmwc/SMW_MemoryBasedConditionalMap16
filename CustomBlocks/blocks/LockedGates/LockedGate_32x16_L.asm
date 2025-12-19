@@ -41,7 +41,7 @@ BodyInside:
 ;WallFeet:	; when using db $37
 ;WallBody:
 Main:
-	%GetWhatKeyCounter()					;>Get what counter based on what level.
+	%MBCM16GetWhatKeyCounter()					;>Get what counter based on what level.
 	;BCS Done						;>If not found, skip.
 	BCC +
 	RTL
@@ -60,14 +60,14 @@ Main:
 	STA $02							;/
 	SEP #$20
 	%BlkCoords2C800Index()
-	%SearchBlockFlagIndex()
+	%MBCM16SearchBlockFlagIndex()
 	REP #$20						;\If flag number associated with this block location not found, return.
 	CMP #$FFFE						;|
 	BEQ DonePullX						;/
 	LSR							;>Convert to index number from Index*2.
 	SEP #$20
 	CLC
-	%WriteBlockFlagIndex()
+	%MBCM16WriteBlockFlagIndex()
 	PLX							;>Reobtain key counter index.
 	LDA !Freeram_MBCM16_KeyCounter,x			;\Decrement key counter
 	DEC A							;|
