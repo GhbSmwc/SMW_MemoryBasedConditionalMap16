@@ -90,6 +90,18 @@ LoadFlagTableToCM16:
 ;the level number (X ranging from $0000 to $01FF), and have the value $FF to indcate that the level does
 ;not use MBCM16, it is very possible that you may have levels that don't use MBCM16 at all, thus resulting
 ;lots of unused values in the table with $FF, which waste space.
+;
+; Example:
+;  .LevelList
+;   dw $0105    ;>1st
+;   dw $0106    ;>2nd
+;   dw $0103    ;>3rd
+;  .OneHundredTwentyEightFlagGroupList ;(here, values are GroupNumber*$10)
+;   db $00   ;>1st
+;   db $00   ;>2nd
+;   db $10   ;>3rd
+; ;Which means levels $0105 and $0106 would use group $0, to use flags $000 to $07F. Level $0103 would
+; ;use group $1, using flags $080 to $0FF.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .LevelList
 	dw $0105		;>Item 0 (X = $0000, Y = $0000)

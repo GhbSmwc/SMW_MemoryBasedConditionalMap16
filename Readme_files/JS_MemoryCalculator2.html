@@ -65,26 +65,26 @@
 </div>
 <table>
 	<tr>
-		<td><kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd> address:</td>
-		<td>$<input type="text" value="7FAD49" id="Input_Freeram_MemoryFlagRAM" onkeydown="IncrementDecrementHex()" onchange="CorrectHexAddresses()"></td>
+		<td><kbd>!Freeram_MBCM16_MemoryFlag</kbd> address:</td>
+		<td>$<input type="text" value="7FAD49" id="Input_Freeram_MemoryFlagRAM" onkeydown="IncrementDecrementHex();" onchange="CorrectHexInput(); Calculate(); CalculateFlagNumber()" data-min="0x0" data-max="0xFFFFFF" data-padlength="6"></td>
 	</tr>
 	<tr>
 		<td>Number of group-128s</td>
-		<td><input type="number" value="2" id="Input_NumberOfGroup128s" min="1" max="16" onchange="CorrectValueRange()"></td>
+		<td><input type="number" value="2" id="Input_NumberOfGroup128s" min="1" max="16" onchange="CorrectDecimalInput(); CalculateFlagNumber(); Calculate(); CalculateFlagNumber()"></td>
 	</tr>
 	<tr>
 		<td><kbd>!Freeram_MBCM16_KeyCounter</kbd> address:</td>
-		<td>$<input type="text" value="7FAD79" id="Input_Freeram_KeyCounter" onkeydown="IncrementDecrementHex()" onchange="CorrectHexAddresses()"></td>
+		<td>$<input type="text" value="7FAD79" id="Input_Freeram_KeyCounter" onkeydown="IncrementDecrementHex()" onchange="CorrectHexInput(); Calculate()" data-min="0x0" data-max="0xFFFFFF" data-padlength="6"></td>
 	</tr>
 	<tr>
 		<td>Number of separate key counters</td>
-		<td><input type="number" value="2" id="Input_NumberOfKeyCounters" min="1" max="256" onchange="CorrectValueRange()"></td>
+		<td><input type="number" value="2" id="Input_NumberOfKeyCounters" min="1" max="256" onchange="CorrectDecimalInput(); Calculate();"></td>
 	</tr>
 </table>
 <hr>
 <table>
 	<tr>
-		<td><kbd>!Freeram_MBCM16_MemoryFlagRAM</kbd> used:</td>
+		<td><kbd>!Freeram_MBCM16_MemoryFlag</kbd> used:</td>
 		<td><kbd id="Output_Freeram_MemoryFlagRAM_Usage"></kbd></td>
 	</tr>
 	<tr>
@@ -96,7 +96,23 @@
 		<td><kbd id="Output_NumberOfKeyCounters"></kbd></td>
 	</tr>
 </table><br>
+<div>
+	<div><label><input type="radio" name="FlagNumberSetting" id="FlagNumberSetting_Converter" checked>Converter view</label></div>
+	<div><label><input type="radio" name="FlagNumberSetting" id="FlagNumberSetting_Table">Table view</label></div>
+</div>
 <div class="CodeBlock" id="Output_FlagTable"></div>
+<div id="Output_Converter">
+	<table>
+		<tr>
+			<td>Flag number:</td>
+			<td><input type="number" value ="0" min="0" max="2047" onchange="CorrectDecimalInput(); CalculateFlagNumber();" id="FlagSearch_FlagNumber">($<input type="text" value="0" onkeydown="IncrementDecrementHex();" onchange="CorrectHexInput(); CalculateFlagNumber();" data-min="0x0" data-max="0x7FF" data-padlength="3">)</td>
+		</tr>
+		<tr>
+			<td>Info:</td>
+			<td><div class="CodeBlock" style="width: 400px; height: 100px;"><pre id="Output_Converter_Info" ></pre></div></td>
+		</tr>
+	</table>
+</div>
 <h3>Placeholder table templates</h3>
 <div>I made this so it is easier to paste the tables in their respective ASM files. All you have to do is edit some placeholder values. Careful not to insert or delete items off the table that isn't the last (bottomost)
 item, else you would have to move the comments (starting from the area that you've insert or deleted to the last) if you are using them to find what flags/level ID they are.</div><br>
@@ -121,9 +137,12 @@ item, else you would have to move the comments (starting from the area that you'
 </div>
 <script>
 	Calculate()
+	CalculateFlagNumber()
 	function IncrementDecrementHex() {
 		let ElementUsed = event.target
 		let KeyPressed = event.key
+		let MinValue = BigInt(ElementUsed.dataset.min)
+		let MaxValue = BigInt(ElementUsed.dataset.max)
 		let Value = 0n
 		try {
 			Value = BigInt("0x" + ElementUsed.value)
@@ -137,10 +156,11 @@ item, else you would have to move the comments (starting from the area that you'
 		} else {
 			Value--
 		}
-		ElementUsed.value = Value.toString(16).padStart(6, "0").toUpperCase()
-		CorrectHexAddresses()
+		Value = BigintClamp(Value, MinValue, MaxValue)
+		ElementUsed.value = Value.toString(16).padStart(parseInt(ElementUsed.dataset.padlength), "0").toUpperCase()
+		ElementUsed.onchange()
 	}
-	function CorrectValueRange() {
+	function CorrectDecimalInput() {
 		let ElementUsed = event.target
 		let Value = 0n
 		let MinValue = BigInt(ElementUsed.min)
@@ -149,18 +169,26 @@ item, else you would have to move the comments (starting from the area that you'
 			Value = BigintClamp(BigInt(ElementUsed.value), MinValue, MaxValue)
 		} catch {}
 		ElementUsed.value = Value.toString(10)
-		Calculate()
+		let CorrespondingHexInput = ElementUsed.parentNode.querySelector("input[type=text]")
+		if (CorrespondingHexInput != null) {
+			CorrespondingHexInput.value = Value.toString(16).padStart(parseInt(CorrespondingHexInput.dataset.padlength), "0").toUpperCase()
+		}
 	}
-	function CorrectHexAddresses() {
+	function CorrectHexInput() {
 		let ElementUsed = event.target
-		let KeyPressed = event.key
 		let Value = 0n
+		let MinValue = BigInt(ElementUsed.dataset.min)
+		let MaxValue = BigInt(ElementUsed.dataset.max)
 		try {
 			Value = BigInt("0x" + ElementUsed.value)
 		} catch {}
-		Value = BigintClamp(Value, 0n, BigInt("0xFFFFFF"))
-		ElementUsed.value = Value.toString(16).padStart(6, "0").toUpperCase()
-		Calculate()
+		Value = BigintClamp(Value, MinValue, MaxValue)
+		ElementUsed.value = Value.toString(16).padStart(parseInt(ElementUsed.dataset.padlength), "0").toUpperCase()
+		
+		let CorrespondingDecimalInput = ElementUsed.parentNode.querySelector("input[type=number]")
+		if (CorrespondingDecimalInput != null) {
+			CorrespondingDecimalInput.value = Value.toString(10)
+		}
 	}
 	function BigintClamp(num, min, max) {
 		//Restrict a number within a specified range, bigInt edition.
@@ -176,7 +204,7 @@ item, else you would have to move the comments (starting from the area that you'
 		let NumberOfBitsOfMemoryFlagRAM = NumberOfBytesOfMemoryFlagRAM*8n
 		
 		let FlagTable = document.getElementById("Output_FlagTable")
-		while (FlagTable.lastElementChild) {
+		while (FlagTable.lastElementChild) { //Clear the table
 			FlagTable.removeChild(FlagTable.lastElementChild)
 		}
 		
@@ -192,7 +220,11 @@ item, else you would have to move the comments (starting from the area that you'
 		}
 		
 		//Generate flag table
-		{
+		let TableAndConverterSetting = document.getElementById("FlagNumberSetting_Table").checked
+		document.getElementById("Output_FlagTable").hidden = !TableAndConverterSetting
+		document.getElementById("Output_Converter").hidden = TableAndConverterSetting
+		
+		if (TableAndConverterSetting) {
 			let Table = document.createElement("table")
 			let Table_HeaderRow = document.createElement("tr")
 			Table.appendChild(Table_HeaderRow)
@@ -214,7 +246,7 @@ item, else you would have to move the comments (starting from the area that you'
 			let Table_HeaderRow2_Subtype = document.createElement("tr")
 			
 			let Table_Header2_MemoryFlagRAMLabel = document.createElement("th")
-			Table_Header2_MemoryFlagRAMLabel.appendChild(document.createTextNode("!Freeram_MBCM16_MemoryFlagRAM address"))
+			Table_Header2_MemoryFlagRAMLabel.appendChild(document.createTextNode("!Freeram_MBCM16_MemoryFlag address"))
 			Table_Header2_MemoryFlagRAMLabel.style.fontFamily = "monospace"
 			Table_HeaderRow2_Subtype.appendChild(Table_Header2_MemoryFlagRAMLabel)
 			
@@ -286,7 +318,7 @@ item, else you would have to move the comments (starting from the area that you'
 			let Text = ""
 			
 			Text += "\tdl $" + Value_Freeram_KeyCounter.toString(16).padStart(6, "0").toUpperCase() + " : dw " + Value_NumberOfKeyCounters.toString(10) + "\t\t;>!Freeram_MBCM16_KeyCounter\n"
-			Text += "\tdl $" + Value_Freeram_MemoryFlagRAM.toString(16).padStart(6, "0").toUpperCase() + " : dw " + NumberOfBytesOfMemoryFlagRAM.toString(10) + "\t\t;>!Freeram_MBCM16_MemoryFlagRAM\n"
+			Text += "\tdl $" + Value_Freeram_MemoryFlagRAM.toString(16).padStart(6, "0").toUpperCase() + " : dw " + NumberOfBytesOfMemoryFlagRAM.toString(10) + "\t\t;>!Freeram_MBCM16_MemoryFlag\n"
 			Text += "\t;[...]\n"
 			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Default values for how many keys you picked up.
@@ -385,6 +417,18 @@ item, else you would have to move the comments (starting from the area that you'
 ;the level number (X ranging from $0000 to $01FF), and have the value $FF to indcate that the level does
 ;not use MBCM16, it is very possible that you may have levels that don't use MBCM16 at all, thus resulting
 ;lots of unused values in the table with $FF, which waste space.
+;
+; Example:
+;  .LevelList
+;   dw $0105    ;>1st
+;   dw $0106    ;>2nd
+;   dw $0103    ;>3rd
+;  .OneHundredTwentyEightFlagGroupList ;(here, values are GroupNumber*$10)
+;   db $00   ;>1st
+;   db $00   ;>2nd
+;   db $10   ;>3rd
+; ;Which means levels $0105 and $0106 would use group $0, to use flags $000 to $07F. Level $0103 would
+; ;use group $1, using flags $080 to $0FF.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .LevelList\n`
 			let LevelListText = ""
@@ -412,7 +456,32 @@ item, else you would have to move the comments (starting from the area that you'
 		}
 	}
 	
-	
+	function CalculateFlagNumber() {
+		let OutputText = ""
+		let Freeram = BigInt("0x" + document.getElementById("Input_Freeram_MemoryFlagRAM").value)
+		let EnteredFlagNumber = BigInt(document.getElementById("FlagSearch_FlagNumber").value)
+		let LMCM16BitNumberToUse = EnteredFlagNumber % 128n
+		let Group128Number = EnteredFlagNumber/128n
+		let Freeram_Offsetter = EnteredFlagNumber/8n
+		let BitNumberWithinByte = EnteredFlagNumber % 8n
+		let LM_7FC060_Offsetter = Freeram_Offsetter % 16n
+		let MaxBitNumber = (BigInt(document.getElementById("Input_NumberOfGroup128s").value)*128n)-1n
+		
+		let WhatBitToDisplayString = (1n<<BitNumberWithinByte).toString(2).padStart(8, "0").replaceAll("0", "x")
+		
+		if (EnteredFlagNumber > MaxBitNumber) {
+			OutputText += "Error! Flag number beyond the last available bit.\nHighest bit number is " + MaxBitNumber.toString(10) + "/$" + MaxBitNumber.toString(16).toUpperCase() + "."
+		} else {
+			OutputText += "RAM address byte written:      $" + (Freeram + Freeram_Offsetter).toString(16).padStart(6, "0").toUpperCase() + " (Addr+" + Freeram_Offsetter.toString(10) + "/$" + Freeram_Offsetter.toString(16).toUpperCase() + ")\n"
+			OutputText += "Corresponding LM's CM16 RAM:   $" + (BigInt("0x7FC060")+LM_7FC060_Offsetter).toString(16).padStart(6, "0").toUpperCase() + " ($7FC060+" + LM_7FC060_Offsetter.toString(10) + "/$" + LM_7FC060_Offsetter.toString(16).toUpperCase() + ")\n"
+			OutputText += "Bit within byte:               " + BitNumberWithinByte.toString(10) + " (%" + WhatBitToDisplayString + ")\n\n"
+			
+			OutputText += "Group to use:                  $" + Group128Number.toString(16).toUpperCase() + "\n"
+			OutputText += "LM CM16 number to enter:       $" + LMCM16BitNumberToUse.toString(16).padStart(2, "0").toUpperCase()
+		}
+		
+		document.getElementById("Output_Converter_Info").textContent = OutputText
+	}
 	
 //These makes all <pre>...</pre> have an effect that double-clicking will select all the text
 //in it, to make it easy to copy code and paste it in your ASM stuff.
