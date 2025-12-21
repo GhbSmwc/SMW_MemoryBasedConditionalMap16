@@ -97,21 +97,24 @@
 	</tr>
 </table><br>
 <div>
-	<div><label><input type="radio" name="FlagNumberSetting" id="FlagNumberSetting_Converter" checked>Converter view</label></div>
-	<div><label><input type="radio" name="FlagNumberSetting" id="FlagNumberSetting_Table">Table view</label></div>
-</div>
-<div class="CodeBlock" id="Output_FlagTable"></div>
-<div id="Output_Converter">
-	<table>
-		<tr>
-			<td>Flag number:</td>
-			<td><input type="number" value ="0" min="0" max="2047" onchange="CorrectDecimalInput(); CalculateFlagNumber();" id="FlagSearch_FlagNumber">($<input type="text" value="0" onkeydown="IncrementDecrementHex();" onchange="CorrectHexInput(); CalculateFlagNumber();" data-min="0x0" data-max="0x7FF" data-padlength="3">)</td>
-		</tr>
-		<tr>
-			<td>Info:</td>
-			<td><div class="CodeBlock" style="width: 400px; height: 100px;"><pre id="Output_Converter_Info" ></pre></div></td>
-		</tr>
-	</table>
+	Flag display setting:
+	<div><label><input type="radio" name="FlagNumberSetting" onchange="ToggleBitView();" id="FlagNumberSetting_Converter" checked>Converter view</label></div>
+	<div><label><input type="radio" name="FlagNumberSetting" onchange="ToggleBitView(); Calculate()" id="FlagNumberSetting_Table">Table view</label></div>
+	<div>
+		<div class="CodeBlock" id="Output_FlagTable"></div>
+		<div id="Output_Converter">
+			<table>
+				<tr>
+					<td>Flag number:</td>
+					<td><input type="number" value ="0" min="0" max="2047" onchange="CorrectDecimalInput(); CalculateFlagNumber();" id="FlagSearch_FlagNumber">($<input type="text" value="0" onkeydown="IncrementDecrementHex();" onchange="CorrectHexInput(); CalculateFlagNumber();" data-min="0x0" data-max="0x7FF" data-padlength="3">)</td>
+				</tr>
+				<tr>
+					<td>Info:</td>
+					<td><div class="CodeBlock" style="width: 400px; height: 100px;"><pre id="Output_Converter_Info" ></pre></div></td>
+				</tr>
+			</table>
+		</div>
+	</div>
 </div>
 <h3>Placeholder table templates</h3>
 <div>I made this so it is easier to paste the tables in their respective ASM files. All you have to do is edit some placeholder values. Careful not to insert or delete items off the table that isn't the last (bottomost)
@@ -482,7 +485,11 @@ item, else you would have to move the comments (starting from the area that you'
 		
 		document.getElementById("Output_Converter_Info").textContent = OutputText
 	}
-	
+	function ToggleBitView() {
+		let Boolean_FlagSetting = document.getElementById("FlagNumberSetting_Converter").checked
+		document.getElementById("Output_Converter").hidden = !Boolean_FlagSetting
+		document.getElementById("Output_FlagTable").hidden = Boolean_FlagSetting
+	}
 //These makes all <pre>...</pre> have an effect that double-clicking will select all the text
 //in it, to make it easy to copy code and paste it in your ASM stuff.
 //
