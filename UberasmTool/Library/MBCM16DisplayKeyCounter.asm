@@ -61,7 +61,7 @@ DisplayHud:
 			RTL
 	
 		..TwoDigits
-			JSL $00974C								;>HexDec.
+			JSL $00974C|!bank							;>HexDec (A = 1s, X = 10s).
 			STA !Settings_MBCM16_KeyCounterTileNumbPos+(!StatusbarFormat*$03)	;>Ones
 			TXA									;\Tens
 			STA !Settings_MBCM16_KeyCounterTileNumbPos+(!StatusbarFormat*$02)	;/
