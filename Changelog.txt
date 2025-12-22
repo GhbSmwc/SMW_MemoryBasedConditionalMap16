@@ -1,0 +1,13 @@
+2025-12-21
+ - General HTML files changes:
+ -- Now use a more user friendly margin format rather than being on the left
+    edge of the viewport and extending full-viewport-width when viewed on a browser.
+ -- Code block text can now be easily copied via CTRL+DoubleClick.
+ -- Readme.html changes:
+ --- Did some rewording and making it easier to understand
+ -- JS_MemoryCalculator.html changes:
+ --- No longer using the old and not-recommended innerHTML in the javascript code
+ --- Uses div tags with "overflow: auto" so that long tables don't cause the whole page to
+     extend (annoying to scroll long distance between ASM text).
+ --- Added an option (and opted for by default) that lets you enter the flag number
+     directly without having to view the entire table.

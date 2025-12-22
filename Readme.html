@@ -55,7 +55,7 @@
 <center><h1>Memory-based Conditional map 16 blocks</h1></center>
 <h2>Introduction</h2>
 
-<p>This ASM resource allows you to have more than 128 bit flags in your entire game (up to 2048 flags). It is done by instead of storing the &ldquo;disappeared&rdquo; or &ldquo;used-up&rdquo; bit directly into Lunar Magic's Conditional Map16 (CM16) bit flags at
+<p>This ASM resource allows you to have more than 128 bit flags in your entire game (up to 2048 flags). It is done by instead of storing the &ldquo;disappeared&rdquo; or &ldquo;used-up&rdquo; memory data directly into Lunar Magic's Conditional Map16 (CM16) bit flags at
 RAM <kbd>$7FC060~$7FC06F</kbd>, it instead writes to freeram (<kbd>!Freeram_MBCM16_MemoryFlag</kbd>) where it is saved. This freeram can take an arbitrary size (ranging from 16 to 256 bytes of storage). When a level utilizing this resource
 loads, it transfers a portion of the freeram, 16 bytes of it, to <kbd>$7FC060~$7FC06F</kbd>, causing blocks using the CM16 flags to appear/disappear, or to change one of the 2 blocks. Note that this still mean you can have up to 128 bit flags
 per level.</p>
@@ -86,7 +86,7 @@ they control access to another point.)</li></ul>
 
 <h2>Useful stuff provided here</h2>
 <ul>
-<li>I made a <a href="Readme_files/JS_MemoryCalculator2.html" id="MemoryCalculator2">Javascript tool</a> that displays the memory statistics, what flag number is in what byte (or what RAM address its located), and
+<li>I made a <a href="Readme_files/JS_MemoryCalculator.html" id="MemoryCalculator2">Javascript tool</a> that displays the memory statistics, what flag number is in what byte (or what RAM address its located), and
 what flag gets written to what flag in <kbd>$7FC060</kbd>, good for debugging among other things.</li>
 <li>For debugging and dealing with bitwise values, I've provided a fast and easy <a href="Readme_files/JS_HexBinary.html" id="HexBinary">simple converter</a> between hex and binary.</li>
 </ul>
@@ -136,7 +136,7 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		Using SRAM/BWRAM plus patch.
 		<ol>
 			<li>
-				Open either SRAM or BWRAM plus depending on if your hack is SA-1 or not. Using <a href="Readme_files/JS_MemoryCalculator2.html" id="JS_MemoryCalculator2_SRAMBwram">this JS tool</a>, copy the given ASM tables from an obviously named
+				Open either SRAM or BWRAM plus depending on if your hack is SA-1 or not. Using <a href="Readme_files/JS_MemoryCalculator.html" id="JS_MemoryCalculator2_SRAMBwram">this JS tool</a>, copy the given ASM tables from an obviously named
 				section of the output and paste them accordingly. Remember that the order in table and defaults must match (the first <kbd>dl $xxxxxx : dw $yyyy</kbd> goes to the first group of bytes
 				in &ldquo;<kbd>defaults</kbd>&rdquo;, second on second, and so on). Remember that this is the default value they would be when you start a new game (and if you have saved the game, make sure you start a new file or erase the old saved data).<br><br>
 				
