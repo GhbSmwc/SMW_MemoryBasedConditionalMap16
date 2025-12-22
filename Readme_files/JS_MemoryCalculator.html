@@ -95,7 +95,14 @@
 		<td><kbd>!Freeram_MBCM16_KeyCounter</kbd> used:</td>
 		<td><kbd id="Output_NumberOfKeyCounters"></kbd></td>
 	</tr>
+	<tr>
+		<td colspan="2" style="text-align: center;"><button onclick="GetAddressTrackerData()" style="width: 200px; height: 20px">Get Address tracker data</button></td>
+	</tr>
 </table><br>
+
+<div style="color: #C00000;" id="OverlapMessage">
+	Address usage range of <kbd>!Freeram_MBCM16_MemoryFlag</kbd> and <kbd>!Freeram_MBCM16_KeyCounter</kbd> are overlapping.
+</div><br><br>
 <div>
 	Flag display setting:
 	<div><label><input type="radio" name="FlagNumberSetting" onchange="ToggleBitView();" id="FlagNumberSetting_Converter" checked>Converter view</label></div>
@@ -214,6 +221,8 @@ item, else you would have to move the comments (starting from the area that you'
 		document.getElementById("Output_Freeram_MemoryFlagRAM_Usage").textContent = "$" + Value_Freeram_MemoryFlagRAM.toString(16).padStart(6, "0").toUpperCase() + "~$" + (Value_Freeram_MemoryFlagRAM+NumberOfBytesOfMemoryFlagRAM-1n).toString(16).padStart(6, "0").toUpperCase() + " (" + NumberOfBytesOfMemoryFlagRAM.toString(10) + " bytes)"
 		document.getElementById("Output_FlagNumberingRangeOfMemoryFlag").textContent = "0~" + (NumberOfBitsOfMemoryFlagRAM-1n).toString(10) + " ($0000~$" + (NumberOfBitsOfMemoryFlagRAM-1n).toString(16).padStart(4, "0").toUpperCase() + ", " + NumberOfBitsOfMemoryFlagRAM.toString(10) + " bits)"
 		
+		let RAMOverlapping = CheckOverlap(Value_Freeram_MemoryFlagRAM, Value_Freeram_MemoryFlagRAM+NumberOfBytesOfMemoryFlagRAM-1n, Value_Freeram_KeyCounter, Value_Freeram_KeyCounter+Value_NumberOfKeyCounters-1n)
+		document.getElementById("OverlapMessage").hidden = !RAMOverlapping
 		{
 			let Text = "$" + Value_Freeram_KeyCounter.toString(16).padStart(6, "0").toUpperCase() + "~$" + (Value_Freeram_KeyCounter+Value_NumberOfKeyCounters-1n).toString(16).padStart(6, "0").toUpperCase() + " (" + Value_NumberOfKeyCounters.toString(10) + " bytes)"
 			if (Value_NumberOfKeyCounters == 1n) {
@@ -489,6 +498,56 @@ item, else you would have to move the comments (starting from the area that you'
 		let Boolean_FlagSetting = document.getElementById("FlagNumberSetting_Converter").checked
 		document.getElementById("Output_Converter").hidden = !Boolean_FlagSetting
 		document.getElementById("Output_FlagTable").hidden = Boolean_FlagSetting
+	}
+	//Check if two ranges overlap.
+	//Given 2 ranges:
+	//Range_A: A_Start and A_End
+	//Range_B: B_Start and B_End
+	//If B_End is touching A_Start, then Range_B is at the lowest position (or Range_A at the highest position) that would count as an overlap
+	//If B_Start is touching A_End, then Range_B is at the highest position (or Range_A is at the lowest position) that would count as an overlap
+		function CheckOverlap(A_Start, A_End, B_Start, B_End) {
+			return (B_End >= A_Start&&B_Start <= A_End)
+		}
+	function GetAddressTrackerData() {
+		let Value_Freeram_MemoryFlagRAM = BigInt("0x" + document.getElementById("Input_Freeram_MemoryFlagRAM").value)
+		let Value_NumberOfGroup128s = BigInt(document.getElementById("Input_NumberOfGroup128s").value)
+		let Value_Freeram_KeyCounter = BigInt("0x" + document.getElementById("Input_Freeram_KeyCounter").value)
+		let Value_NumberOfKeyCounters = BigInt(document.getElementById("Input_NumberOfKeyCounters").value)
+		
+		let NumberOfBytesOfMemoryFlagRAM = Value_NumberOfGroup128s*16n
+		let NumberOfBitsOfMemoryFlagRAM = NumberOfBytesOfMemoryFlagRAM*8n
+		
+		let String = ""
+		String += "$" + Value_Freeram_MemoryFlagRAM.toString(16).padStart(6, "0").toUpperCase() + "\t" + NumberOfBytesOfMemoryFlagRAM.toString(10) + "\tMBCM16 flags\n"
+		String += "$" + Value_Freeram_KeyCounter.toString(16).padStart(6, "0").toUpperCase() + "\t" + Value_NumberOfKeyCounters.toString(10) + "\tMBCM16 key counter(s)"
+		setClipboard(String)
+	}
+	function setClipboard(String) {
+		//Credit goes to Mozilla: https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/write
+		const type = "text/plain";
+		const blob = new Blob([String], { type });
+		const data = [new ClipboardItem({ [type]: blob })];
+		
+		let EventElement = event.target
+	
+		navigator.clipboard.write(data).then(
+			((EventElement) => {
+			/* success */
+				EventElement.textContent = "Copied!"
+				EventElement.style.color = "#008000"
+				setTimeout(RevertCopyMessage.bind(null, EventElement), 1500)
+			}).bind(null, EventElement),
+			((EventElement) => {
+			/* failure */
+				EventElement.textContent = "Failed!"
+				EventElement.style.color = "#800000"
+				setTimeout(RevertCopyMessage.bind(null, EventElement), 1500)
+			}).bind(null, EventElement)
+		);
+	}
+	function RevertCopyMessage(Element) {
+		Element.textContent = "Get Address tracker data"
+		Element.style.color = "#000000"
 	}
 //These makes all <pre>...</pre> have an effect that double-clicking will select all the text
 //in it, to make it easy to copy code and paste it in your ASM stuff.
