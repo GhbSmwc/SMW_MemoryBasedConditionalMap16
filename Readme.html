@@ -180,7 +180,7 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 106	MBCM16DisplayKeyCounter.asm : $01
 1CA	MBCM16DisplayKeyCounter.asm : $01
 </pre></td></tr></table><br><br>
-				The extra byte here specify what key counter index to display. Also must correlate with the list in <kbd>CustomBlocks/Routines/MBCM16GetWhatKeyCounter.asm</kbd><br><br>
+				The extra byte here specify what key counter index to display. Also must correlate with the list in <kbd>CustomBlocks/Routines/MBCM16GetWhatKeyCounter.asm</kbd> unless you want the status bar to show the key counter other than what's currently used.<br><br>
 
 				What will happen is when the level loads, <kbd>$7FC060~$7FC06F</kbd> is now written from <kbd>!Freeram_MBCM16_MemoryFlag+(&lt;Group_Number&gt;*$10)</kbd> to
 				<kbd>!Freeram_MBCM16_MemoryFlag+((&lt;Group_Number&gt;*$10)+$0F)</kbd>. Group number is found in <kbd>.OneHundredTwentyEightFlagGroupList</kbd>
