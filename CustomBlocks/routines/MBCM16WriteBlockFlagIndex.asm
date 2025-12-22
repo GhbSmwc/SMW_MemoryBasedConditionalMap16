@@ -1,4 +1,4 @@
-	incsrc "../FlagMemoryDefines/Defines.asm"
+	incsrc "../MBCM16Defines/Defines.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Bit search. This is basically euclidean division
 ;by 8 to determine what bit and byte to read and

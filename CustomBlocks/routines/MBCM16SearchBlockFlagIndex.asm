@@ -18,7 +18,7 @@ function GetC800IndexVertiLvl(XPos, YPos) = (512*(YPos/16))+(256*(XPos/16))+((YP
 ;Output:
 ;-A (16-bit): the flag number, times 2 (so if it is flag 3, then A = $0006). With 16 (maximum) group-256s, A would range
 ; from 0 to 4094 ($0000 to $0FFE).
-; Recommended to add a check X=$FFFE as a failsafe in case of a bug could happen or if you accidentally placed a block
+; Recommended to add a check A=$FFFE as a failsafe in case of a bug could happen or if you accidentally placed a block
 ; at a location that isn't assigned.
 ;
 ;CTRL+F these to insta-jump to a specific table:

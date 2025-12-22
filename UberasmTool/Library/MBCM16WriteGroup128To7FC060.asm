@@ -1,4 +1,4 @@
-	incsrc "../FlagMemoryDefines/Defines.asm"
+	incsrc "../MBCM16Defines/Defines.asm"
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Load flag table into conditional map16 flags (CM16: $7FC060)

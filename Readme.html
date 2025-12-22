@@ -74,7 +74,7 @@ they control access to another point.)</li></ul>
 <ul>
 <li><a href="https://www.smwcentral.net/?p=section&a=details&id=21211">Lunar Magic</a></li>
 <li><a href="https://www.smwcentral.net/?p=section&a=details&id=19047">Gopher Popcorn Stew</a> (block inserter)</li>
-<li><a href="https://www.smwcentral.net/?p=section&a=details&id=19982">UberASM Tool</a></li>
+<li><a href="https://www.smwcentral.net/?p=section&a=details&id=19982">UberASM Tool (version 2.0+)</a></li>
 <li><a href="https://www.smwcentral.net/?p=section&a=details&id=18531">SRAM/BWRAM plus patch</a></li>
 </ul>
 <h2>Recommended</h2>
@@ -110,14 +110,20 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		Freerams and tables:
 		<ol>
 			<li>
-				Because the blocks check their locations and level numbers, you must open these files with a text editor and edit:
+				Because the blocks and uberasm tool check their locations and level numbers, you must open these files with a text editor and edit:
 				<ul>
 					<li>
 						<kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>, this determines what what section of RAM defined as <kbd>!Freeram_MBCM16_MemoryFlag</kbd>, (referred to as &ldquo;group-128&rdquo;) to use for each level using the MBCM16.
 						See the stuff under label <kbd>.LevelList</kbd> (make sure you read the comments!).
 					</li>
-					<li><kbd>UberasmTool/Library/MBCM16DisplayKeyCounter</kbd>, this displays the key counter on the heads-up display (HUD) of how many keys of a particular level. This does not support sprite status bar patches.</li>
-					<li><kbd>CustomBlocks/routines/MBCM16SearchBlockFlagIndex.asm</kbd>, this is a routine that searches for what index matches with the block being touched, to determine what flag the block to set/reset so it doesn't respawn on level (re)load.</li>
+					<li>
+						<kbd>UberasmTool/Level/MBCM16DisplayKeyCounter</kbd>, this calls a subroutine to write to LM's CM16 on level load, and displays the key counter on the heads-up display (HUD) of how many keys of a particular level (uses extra byte to determine
+						which key counter to use). This does not support sprite status bar patches.
+					</li>
+					<li>
+						<kbd>CustomBlocks/routines/MBCM16SearchBlockFlagIndex.asm</kbd>, this is a routine that searches for what index matches with the block being touched (times 2 and on accumulator), to determine what flag the block to set/reset so it doesn't respawn on level (re)load. If not found,
+						it returns a value of <kbd>$FFFE</kbd> if not found.
+					</li>
 					<li>
 						<kbd>CustomBlocks/routines/MBCM16GetWhatKeyCounter</kbd>, blocks' routine to find what key counter to use (this system supports separate key counters, akin to most <i>Zelda</i> games since <i>A Link to the Past</i> that you cannot use a small key
 						from one dungeon in another).
@@ -127,7 +133,7 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 				Comments should fully explained how each table correspond. Even better is that the JS tool (linked previously) also print out placeholder template tables (with comments
 				pointing of each item and their flag numbers/Level ID) for you to copy.
 				
-				<li>Open <kbd>FlagMemoryDefines/Defines.asm</kbd> and change any define that are <kbd>!Freeram_&lt;Name_here&gt;</kbd> setting if you find RAM conflicts with another ASM resource (including itself). I highly
+				<li>Open <kbd>MBCM16Defines/Defines.asm</kbd> and change any define that are <kbd>!Freeram_&lt;Name_here&gt;</kbd> setting if you find RAM conflicts with another ASM resource (including itself). I highly
 				recommend make note as (including before and after) you insert any patches (including third party) so it is easier to keep track of (I made a <a href="https://www.smwcentral.net/?p=section&a=details&id=39887">javascript tool that tracks this</a>). There's also other settings you
 				can play around with. Also, this assumes you are using the super status bar patch, if you are not using that and/or using other patches, adjust the defines under &ldquo;<kbd>HUD stuff</kbd>&rdquo;.</li>
 			</li>
@@ -167,32 +173,21 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		<p>Uberasm tool insertion</p>
 		<ol>
 			<li>
-				<p><sup><font color="yellow">[Return later]</font></sup>In any level that are using the flags, create/edit a <kbd>.asm</kbd> file (like <kbd>Level105.asm</kbd>), in that file, paste this code:
+				<sup><font color="yellow">[Return later]</font></sup>In any level that are using the flags, you use <kbd>MBCM16DisplayKeyCounter.asm</kbd> to load the flags into LM's <kbd>$7FC060~$7FC06F</kbd>. UAT's 2.0's list file for levels should be like this (using the provided default example):
 <table><tr><td><pre>
-	incsrc "../FlagMemoryDefines/Defines.asm"
-	
-	load:
-	;Transfer group-128 to $7FC060
-	JSL MBCM16WriteGroup128To7FC060_LoadFlagTableToCM16
-	;[...]
-	RTL
-main:
-	;Display key counter on the HUD (during the level at play)
-	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_MBCM16_KeyCounter.
-	JSL MBCM16DisplayKeyCounter_DisplayHud
-	;[...]
-	RTL
-init:
-	;Display key counter on the HUD (during screen fading into the level)
-	LDY #$00					;>$xx is what key counter to use, as an index from !Freeram_MBCM16_KeyCounter.
-	JSL MBCM16DisplayKeyCounter_DisplayHud
-	;[...]
-	RTL
-</pre></td></tr></table>
-				What will happen is when the level loads, <kbd>$7FC060</kbd> is now written from <kbd>!Freeram_MBCM16_MemoryFlag+(&lt;Group_Number&gt;*$10)</kbd> to
+105	MBCM16DisplayKeyCounter.asm : $00
+1CB	MBCM16DisplayKeyCounter.asm : $00
+106	MBCM16DisplayKeyCounter.asm : $01
+1CA	MBCM16DisplayKeyCounter.asm : $01
+</pre></td></tr></table><br><br>
+				The extra byte here specify what key counter index to display.<br><br>
+
+				What will happen is when the level loads, <kbd>$7FC060~$7FC06F</kbd> is now written from <kbd>!Freeram_MBCM16_MemoryFlag+(&lt;Group_Number&gt;*$10)</kbd> to
 				<kbd>!Freeram_MBCM16_MemoryFlag+((&lt;Group_Number&gt;*$10)+$0F)</kbd>. Group number is found in <kbd>.OneHundredTwentyEightFlagGroupList</kbd>
 				in <kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>. This also displays the key counter (or write blank tile <kbd>$FC</kbd> if you don't have any)
-				on the status bar/HUD.</p>
+				on the status bar/HUD.<br><br>
+				
+				After the level loads, the init and main will write the key counter on the status bar (writes blank tiles instead if having no keys).
 			</li>
 			<li>
 				<sup><font color="yellow">[Return later]</font></sup>Specify what group-128 in <kbd>MBCM16WriteGroup128To7FC060.asm</kbd> should your level will use,
