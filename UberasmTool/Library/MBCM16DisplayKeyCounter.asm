@@ -17,7 +17,7 @@
 ;Y index = Index from !Freeram_MBCM16_KeyCounter.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 DisplayHud:
-	
+	;(note to developer, place code that loads a level number and determine what Y index/key counter to use)
 	.ClearTiles
 		LDX.b #(!StatusbarFormat*$03)
 	
@@ -31,9 +31,9 @@ DisplayHud:
 			DEX #!StatusbarFormat
 			BPL ..Loop
 	
-		TYX
+		TYX								;>Transfer key counter index to X.
 		LDA !Freeram_MBCM16_KeyCounter,x
-		BEQ .Done
+		BEQ .Done							;>If current key counter is 0, don't display key counter.
 	.WriteTilePrefix
 		;Write <keysymbol>X<1 or 2 digits here>
 		LDA #!Settings_MBCM16_KeyCounterKeySymbolTileNumb : STA !Settings_MBCM16_KeyCounterTileNumbPos
