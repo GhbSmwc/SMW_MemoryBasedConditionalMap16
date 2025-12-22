@@ -17,8 +17,9 @@
 ;Y index = Index from !Freeram_MBCM16_KeyCounter.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 DisplayHud:
-	;(note to self, place code that loads a level number and determine what Y index/key counter to use, and make sure this doesn't run every frame!)
-	;
+	;plan:
+	;-Make this ASM file a level rather than a library
+	;-Utilize UAT's 2.0's extra bytes to determine what key counter index to use.
 	.ClearTiles
 		LDX.b #(!StatusbarFormat*$03)
 	
@@ -68,28 +69,3 @@ DisplayHud:
 			STA !Settings_MBCM16_KeyCounterTileNumbPos+(!StatusbarFormat*$02)	;/
 	.Done
 		RTL
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;What key counter to use depending on what level you're in.
-;
-;Similarly to MBCM16WriteGroup128To7FC060.asm, but instead
-;of what group-128, it is what key counter to use. Each nth
-;item here represents what level to use, example:
-;
-;
-;.LevelList
-;	dw $0105		;>N = 1
-;	dw $0106		;>N = 2
-;	..End
-;.WhatKeyCounterIndex
-;	db $00			;>N = 1
-;	db $01			;>N = 2
-;	..End
-;Means that level $0105 to use key counter index 0
-;and level $0106 to use index 1.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.LevelList
-	dw $0105
-	..End
-.WhatKeyCounterIndex
-	db $00
-	..End
