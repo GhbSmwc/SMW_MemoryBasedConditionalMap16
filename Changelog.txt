@@ -11,3 +11,4 @@
      extend (annoying to scroll long distance between ASM text).
  --- Added an option (and opted for by default) that lets you enter the flag number
      directly without having to view the entire table.
+ - Made the key optionally collectible via kicked/dropped sprite.

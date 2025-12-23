@@ -8,6 +8,26 @@ JMP TopCorner : JMP BodyInside : JMP HeadInside
 
 	incsrc "../../MBCM16Defines/Defines.asm"
 
+if !Settings_MBCM16_CollectiableByDroppedKickedSprite
+	SpriteH:
+		JSR DroppedOrKicked
+		BCC No
+		PHX
+		%sprite_block_position()
+		JSL TakeKey
+		PLX
+	No:
+		RTL
+	SpriteV:
+		JSR DroppedOrKicked
+		BCC No
+		PHX
+		%sprite_block_position()
+		JSL TakeKey
+		PLX
+		RTL
+endif
+
 MarioBelow:
 MarioAbove:
 MarioSide:
@@ -50,6 +70,7 @@ HeadInside:
 		JSL $03B72B					;>Check collision
 		BCC Done
 	endif
+TakeKey:
 ;don't do anything should you have 99 keys.
 	%MBCM16GetWhatKeyCounter()					;>Get what counter based on what level.
 	BCS Done						;>Return if level not marked
@@ -91,12 +112,28 @@ HeadInside:
 
 ;WallFeet:	; when using db $37
 ;WallBody:
-
-SpriteV:
-SpriteH:
+if !Settings_MBCM16_CollectiableByDroppedKickedSprite == 0
+	SpriteV:
+	SpriteH:
+endif
 
 MarioCape:
 MarioFireball:
 	RTL
+if !Settings_MBCM16_CollectiableByDroppedKickedSprite
+	DroppedOrKicked:
+		LDA !14C8,x
+		CMP #$09
+		BEQ .Yes
+		CMP #$0A
+		BEQ .Yes
+		
+		.No
+			CLC
+		RTS
+		.Yes
+			SEC
+		RTS
+endif
 
 print "A collectible key. Up to 99 can be carried for each different key."

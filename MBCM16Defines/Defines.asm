@@ -93,6 +93,10 @@ endif
 			; 0 = Full 16x16 block
 			; 1 = 16x16 Sprite-styled hitbox (actually its hitbox is 12x10, used by
 			;     most powerup sprites).
+		
+		!Settings_MBCM16_CollectiableByDroppedKickedSprite = 1
+			;^0 = No (Only player can grab via touching it)
+			; 1 = Yes (Can also get the key via kicked/dropped sprite)
 
 	;What sound to play with picking up the key.
 		!Settings_MBCM16_Key_SoundRAM = $1DFC|!addr
