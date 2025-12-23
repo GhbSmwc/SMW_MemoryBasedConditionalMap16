@@ -96,8 +96,8 @@ function GetC800IndexVertiLvl(XPos, YPos) = (512*(YPos/16))+(256*(XPos/16))+((YP
 	dw $0105		;>Flag $17 (Group $0) -> LM's CM16 flag $17
 	dw $0105		;>Flag $18 (Group $0) -> LM's CM16 flag $18
 	dw $01CB		;>Flag $19 (Group $0) -> LM's CM16 flag $19
-	dw $FFFF		;>Flag $1A (Group $0) -> LM's CM16 flag $1A
-	dw $FFFF		;>Flag $1B (Group $0) -> LM's CM16 flag $1B
+	dw $0106		;>Flag $1A (Group $0) -> LM's CM16 flag $1A
+	dw $0106		;>Flag $1B (Group $0) -> LM's CM16 flag $1B
 	dw $FFFF		;>Flag $1C (Group $0) -> LM's CM16 flag $1C
 	dw $FFFF		;>Flag $1D (Group $0) -> LM's CM16 flag $1D
 	dw $FFFF		;>Flag $1E (Group $0) -> LM's CM16 flag $1E
@@ -198,10 +198,10 @@ function GetC800IndexVertiLvl(XPos, YPos) = (512*(YPos/16))+(256*(XPos/16))+((YP
 	dw $FFFF		;>Flag $7D (Group $0) -> LM's CM16 flag $7D
 	dw $FFFF		;>Flag $7E (Group $0) -> LM's CM16 flag $7E
 	dw $FFFF		;>Flag $7F (Group $0) -> LM's CM16 flag $7F
-	dw $FFFF		;>Flag $80 (Group $1) -> LM's CM16 flag $0
-	dw $FFFF		;>Flag $81 (Group $1) -> LM's CM16 flag $1
-	dw $FFFF		;>Flag $82 (Group $1) -> LM's CM16 flag $2
-	dw $FFFF		;>Flag $83 (Group $1) -> LM's CM16 flag $3
+	dw $01CA		;>Flag $80 (Group $1) -> LM's CM16 flag $0
+	dw $01CA		;>Flag $81 (Group $1) -> LM's CM16 flag $1
+	dw $01CA		;>Flag $82 (Group $1) -> LM's CM16 flag $2
+	dw $01CA		;>Flag $83 (Group $1) -> LM's CM16 flag $3
 	dw $FFFF		;>Flag $84 (Group $1) -> LM's CM16 flag $4
 	dw $FFFF		;>Flag $85 (Group $1) -> LM's CM16 flag $5
 	dw $FFFF		;>Flag $86 (Group $1) -> LM's CM16 flag $6
@@ -634,8 +634,8 @@ function GetC800IndexVertiLvl(XPos, YPos) = (512*(YPos/16))+(256*(XPos/16))+((YP
 	dw GetC800IndexHorizLvl($01B0, $0033, $0018)		;>Flag $17 (Group $0) -> LM's CM16 flag $17
 	dw GetC800IndexHorizLvl($01B0, $0036, $0018)		;>Flag $18 (Group $0) -> LM's CM16 flag $18
 	dw GetC800IndexHorizLvl($01B0, $0008, $0016)		;>Flag $19 (Group $0) -> LM's CM16 flag $19
-	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $1A (Group $0) -> LM's CM16 flag $1A
-	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $1B (Group $0) -> LM's CM16 flag $1B
+	dw GetC800IndexHorizLvl($01B0, $000B, $0017)		;>Flag $1A (Group $0) -> LM's CM16 flag $1A
+	dw GetC800IndexHorizLvl($01B0, $0012, $0015)		;>Flag $1B (Group $0) -> LM's CM16 flag $1B
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $1C (Group $0) -> LM's CM16 flag $1C
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $1D (Group $0) -> LM's CM16 flag $1D
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $1E (Group $0) -> LM's CM16 flag $1E
@@ -736,10 +736,10 @@ function GetC800IndexVertiLvl(XPos, YPos) = (512*(YPos/16))+(256*(XPos/16))+((YP
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $7D (Group $0) -> LM's CM16 flag $7D
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $7E (Group $0) -> LM's CM16 flag $7E
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $7F (Group $0) -> LM's CM16 flag $7F
-	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $80 (Group $1) -> LM's CM16 flag $0
-	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $81 (Group $1) -> LM's CM16 flag $1
-	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $82 (Group $1) -> LM's CM16 flag $2
-	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $83 (Group $1) -> LM's CM16 flag $3
+	dw GetC800IndexHorizLvl($01B0, $0005, $0015)		;>Flag $80 (Group $1) -> LM's CM16 flag $0
+	dw GetC800IndexHorizLvl($01B0, $0007, $0015)		;>Flag $81 (Group $1) -> LM's CM16 flag $1
+	dw GetC800IndexHorizLvl($01B0, $000A, $0015)		;>Flag $82 (Group $1) -> LM's CM16 flag $2
+	dw GetC800IndexHorizLvl($01B0, $000C, $0015)		;>Flag $83 (Group $1) -> LM's CM16 flag $3
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $84 (Group $1) -> LM's CM16 flag $4
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $85 (Group $1) -> LM's CM16 flag $5
 	dw GetC800IndexHorizLvl($01B0, $0000, $0000)		;>Flag $86 (Group $1) -> LM's CM16 flag $6

@@ -104,8 +104,10 @@ LoadFlagTableToCM16:
 ; ;use group $1, using flags $080 to $0FF.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .LevelList
-	dw $0105		;>Item 0 (X = $0000, Y = $0000)
-	dw $0106		;>Item 1 (X = $0002, Y = $0001)
+	dw $0105		;>Item 0
+	dw $01CB		;>Item 1
+	dw $0106		;>Item 2
+	dw $01CA		;>Item 3
 ..End
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;This table specifies what group-128 each level should use.
@@ -114,5 +116,7 @@ LoadFlagTableToCM16:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .OneHundredTwentyEightFlagGroupList
 	db $00			;>Item 0
-	db $10			;>Item 1
+	db $00			;>Item 1
+	db $00			;>Item 2
+	db $10			;>Item 3
 ..End
