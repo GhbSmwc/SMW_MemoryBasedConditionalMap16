@@ -96,7 +96,7 @@ what flag gets written to what flag in <kbd>$7FC060</kbd>, good for debugging am
 <p>This is the type of ASM resource that you may have to come back, edit stuff, and then re-insert periodically as you develop your hack, since this works in tandem of you creating levels. Instructions below marked with
 &ldquo;<sup><font color="yellow">[Return later]</font></sup>&rdquo; indicates you to perform these steps when re-inserting in your hack.</p>
 
-<p>I've included a sample level (for level 105) demonstrating the key blocks, along with sample ASM tables (what flags the blocks should be using and what group-128 to use in level 105).</p>
+<p>I've included a sample level (for level 105) demonstrating the key blocks, along with sample ASM tables to work with the sample level.</p>
 
 <p><s>If you are using this on SA-1, LM version 3.10 (September 24, 2019) and before it, they have a bug <a href="https://smwc.me/1522106">I've reported</a> that causes blocks to fail to spawn (or spawn when it shouldn't (never experienced this))
 even when <kbd>$7FC060-$7FC06F</kbd> bits are set (or clear) on certain emulators. This is due to the fact that level load code is processed under SA-1, so WRAM (<kbd>$7Exxxx</kbd> and <kbd>$7Fxxxx</kbd>) access
@@ -110,14 +110,14 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		Freerams and tables:
 		<ol>
 			<li>
-				Because the blocks and uberasm tool check their locations and level numbers, you must open these files with a text editor and edit:
+				Because the blocks and uberasm tool check their locations and level numbers for blocks associated to a flag number, you must open these files with a text editor and edit (currently, by default uses the sample level for testing purposes):
 				<ul>
 					<li>
 						<kbd>UberasmTool/Library/MBCM16WriteGroup128To7FC060.asm</kbd>, this determines what what section of RAM defined as <kbd>!Freeram_MBCM16_MemoryFlag</kbd>, (referred to as &ldquo;group-128&rdquo;) to use for each level using the MBCM16.
 						See the stuff under label <kbd>.LevelList</kbd> (make sure you read the comments!).
 					</li>
 					<li>
-						<kbd>UberasmTool/Level/MBCM16DisplayKeyCounter.asm</kbd>, this calls a subroutine to write to LM's CM16 on level load, and displays the key counter on the heads-up display (HUD) of how many keys of a particular level (uses extra byte to determine
+						<kbd>UberasmTool/Level/MBCM16LevelCode.asm</kbd>, this calls a subroutine to write to LM's CM16 on level load, and displays the key counter on the heads-up display (HUD) of how many keys of a particular level (uses extra byte to determine
 						which key counter to use). This does not support sprite status bar patches.
 					</li>
 					<li>
@@ -125,7 +125,7 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 						it returns a value of <kbd>$FFFE</kbd> if not found.
 					</li>
 					<li>
-						<kbd>CustomBlocks/routines/MBCM16GetWhatKeyCounter</kbd>, blocks' routine to find what key counter to use (this system supports separate key counters, akin to most <i>Zelda</i> games since <i>A Link to the Past</i> that you cannot use a small key
+						<kbd>CustomBlocks/routines/MBCM16GetWhatKeyCounter.asm</kbd>, blocks' routine to find what key counter to use (this system supports separate key counters, akin to most <i>Zelda</i> games since <i>A Link to the Past</i> that you cannot use a small key
 						from one dungeon in another).
 					</li>
 				</ul>
@@ -173,12 +173,12 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 		<p>Uberasm tool insertion</p>
 		<ol>
 			<li>
-				<sup><font color="yellow">[Return later]</font></sup>In any level that are using the flags, you use <kbd>MBCM16DisplayKeyCounter.asm</kbd> to load the flags into LM's <kbd>$7FC060~$7FC06F</kbd>. UAT's 2.0's list file for levels should be like this (using the provided default example):
+				<sup><font color="yellow">[Return later]</font></sup>In any level that are using the flags, you use <kbd>MBCM16LevelCode.asm</kbd> to load the flags into LM's <kbd>$7FC060~$7FC06F</kbd>. UAT's 2.0's list file for levels should be like this (using the provided default example):
 <table><tr><td><pre>
-105	MBCM16DisplayKeyCounter.asm : $00
-1CB	MBCM16DisplayKeyCounter.asm : $00
-106	MBCM16DisplayKeyCounter.asm : $01
-1CA	MBCM16DisplayKeyCounter.asm : $01
+105	MBCM16LevelCode.asm : $00
+1CB	MBCM16LevelCode.asm : $00
+106	MBCM16LevelCode.asm : $01
+1CA	MBCM16LevelCode.asm : $01
 </pre></td></tr></table><br><br>
 				The extra byte here specify what key counter index to display. Also must correlate with the list in <kbd>CustomBlocks/Routines/MBCM16GetWhatKeyCounter.asm</kbd> unless you want the status bar to show the key counter other than what's currently used.<br><br>
 

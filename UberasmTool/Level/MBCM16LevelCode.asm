@@ -1,13 +1,15 @@
 	incsrc "../MBCM16Defines/Defines.asm"
 ;>bytes 1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;This uberASM tool level code does 2 things
+; - Calls a subroutine that would transfer !Freeram_MBCM16_MemoryFlag to $7FC060 during level load
+; - Display a key counter on the layer 3 status bar, with which counter to show being the extra byte.
+;Extra bytes info:
+; EXB1: Key counter index to use.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 load:
 	JSL MBCM16WriteGroup128To7FC060_LoadFlagTableToCM16
 	RTL
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Display key counter on the HUD
-;Extra bytes info:
-;EXB1: Key counter index to use.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 main:
 init:
 DisplayHud:
