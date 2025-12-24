@@ -10,6 +10,7 @@
 			table, th, td {
 			border: 1px solid white;
 			border-collapse: collapse;
+			padding: 0px;
 			}
 			
 			abbr{cursor: help;}
@@ -49,6 +50,8 @@
 			input {
 				font-family: monospace;
 			}
+			
+			label { display: block; }
 		</style>
 	</head>
 <body style="max-width: 1000px; margin: auto; padding: 15px">
@@ -69,15 +72,19 @@
 	</tr>
 	<tr>
 	<td>
-	<abbr title="Bit 7"><input type="checkbox" id="Bit7" onchange="CheckBoxInput()"></abbr>
-	<abbr title="Bit 6"><input type="checkbox" id="Bit6" onchange="CheckBoxInput()"></abbr>
-	<abbr title="Bit 5"><input type="checkbox" id="Bit5" onchange="CheckBoxInput()"></abbr>
-	<abbr title="Bit 4"><input type="checkbox" id="Bit4" onchange="CheckBoxInput()"></abbr>
-	<abbr title="Bit 3"><input type="checkbox" id="Bit3" onchange="CheckBoxInput()"></abbr>
-	<abbr title="Bit 2"><input type="checkbox" id="Bit2" onchange="CheckBoxInput()"></abbr>
-	<abbr title="Bit 1"><input type="checkbox" id="Bit1" onchange="CheckBoxInput()"></abbr>
-	<abbr title="Bit 0"><input type="checkbox" id="Bit0" onchange="CheckBoxInput()"></abbr><br>
-	<button onclick="WriteAllBits(1)">Set all</button><button onclick="WriteAllBits(0)">Clear all</button><button onclick="WriteAllBits(2)">Invert</button>
+		<table>
+			<tr>
+				<td><label><abbr title="Bit 7"><input type="checkbox" id="Bit7" onchange="CheckBoxInput()"></abbr></label></td>
+				<td><label><abbr title="Bit 6"><input type="checkbox" id="Bit6" onchange="CheckBoxInput()"></abbr></label></td>
+				<td><label><abbr title="Bit 5"><input type="checkbox" id="Bit5" onchange="CheckBoxInput()"></abbr></label></td>
+				<td><label><abbr title="Bit 4"><input type="checkbox" id="Bit4" onchange="CheckBoxInput()"></abbr></label></td>
+				<td><label><abbr title="Bit 3"><input type="checkbox" id="Bit3" onchange="CheckBoxInput()"></abbr></label></td>
+				<td><label><abbr title="Bit 2"><input type="checkbox" id="Bit2" onchange="CheckBoxInput()"></abbr></label></td>
+				<td><label><abbr title="Bit 1"><input type="checkbox" id="Bit1" onchange="CheckBoxInput()"></abbr></label></td>
+				<td><label><abbr title="Bit 0"><input type="checkbox" id="Bit0" onchange="CheckBoxInput()"></abbr></label></td>
+			</tr>
+		</table>
+		<button onclick="WriteAllBits(1)">Set all</button><button onclick="WriteAllBits(0)">Clear all</button><button onclick="WriteAllBits(2)">Invert</button>
 	</td>
 	</tr>
 	</table>
