@@ -135,7 +135,10 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 				
 				<li>Open <kbd>MBCM16Defines/Defines.asm</kbd> and change any define that are <kbd>!Freeram_&lt;Name_here&gt;</kbd> setting if you find RAM conflicts with another ASM resource (including itself). I highly
 				recommend make note as (including before and after) you insert any patches (including third party) so it is easier to keep track of (I made a <a href="https://www.smwcentral.net/?p=section&a=details&id=39887">javascript tool that tracks this</a>). There's also other settings you
-				can play around with. Also, this assumes you are using the super status bar patch, if you are not using that and/or using other patches, adjust the defines under &ldquo;<kbd>HUD stuff</kbd>&rdquo;.</li>
+				can play around with. Also, this assumes you are using the super status bar patch, if you are not using that and/or using other patches, adjust the defines under &ldquo;<kbd>HUD stuff</kbd>&rdquo;.<br><br>
+				
+				Once you're done, have the <b>folder containing them</b>, <kbd>MBCM16Defines</kbd> be copied and pasted in GPS and Uberasm tool's folder, in the same directory as their <kbd>.exe</kbd> programs are at. If you later make changes in the defines,
+				they must be replaced to include the up-to-date information.</li>
 			</li>
 		</ol>
 	</li>

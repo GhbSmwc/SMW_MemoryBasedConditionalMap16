@@ -333,13 +333,13 @@ item, else you would have to move the comments (starting from the area that you'
 			Text += "\tdl $" + Value_Freeram_MemoryFlagRAM.toString(16).padStart(6, "0").toUpperCase() + " : dw " + NumberOfBytesOfMemoryFlagRAM.toString(10) + "\t\t;>!Freeram_MBCM16_MemoryFlag\n"
 			Text += "\t;[...]\n"
 			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Default values for how many keys you picked up.
+;Default values for how many keys you picked up (MBCM16).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n`
 			for (let i =0n; i < Value_NumberOfKeyCounters; i++) {
 				Text += "\tdb $00\t\t;>$" + (Value_Freeram_KeyCounter+i).toString(16).padStart(6, "0").toUpperCase() + "\n"
 			}
 			Text += `;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Default spawn flags for the MBCM16 blocks when you start up your new file
+;Default spawn flags for the MBCM16 blocks when you start up your new file.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n`
 			let DefaultValue = "%00000000"
 			if (document.getElementById("SRAMDefault_FF").checked) {
