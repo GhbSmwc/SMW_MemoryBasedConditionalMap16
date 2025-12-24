@@ -64,8 +64,8 @@
 	<th>Hexadecimal</th>
 	</tr>
 	<tr>
-	<td>%<input type="text" onchange="EnteredBinary()" id="BinaryInput" value="00000000"></td>
-	<td rowspan="2">$<input type="text" onchange="EnteredHex()" onkeydown="IncrementDecrementHex();" id="HexInput" value="00"></td>
+	<td>%<input type="text" onchange="EnteredBinary()" onkeydown="IncrementDecrementAnyRadix();" id="BinaryInput" value="00000000" data-radixprefix="0b"></td>
+	<td rowspan="2">$<input type="text" onchange="EnteredHex()" onkeydown="IncrementDecrementAnyRadix();" id="HexInput" value="00"  data-radixprefix="0x"></td>
 	</tr>
 	<tr>
 	<td>
@@ -77,16 +77,23 @@
 	<abbr title="Bit 2"><input type="checkbox" id="Bit2" onchange="CheckBoxInput()"></abbr>
 	<abbr title="Bit 1"><input type="checkbox" id="Bit1" onchange="CheckBoxInput()"></abbr>
 	<abbr title="Bit 0"><input type="checkbox" id="Bit0" onchange="CheckBoxInput()"></abbr><br>
-	<button onclick="WriteAllBits(true)">Set all bits</button><button onclick="WriteAllBits(false)">Clear all bits</button>
+	<button onclick="WriteAllBits(1)">Set all</button><button onclick="WriteAllBits(0)">Clear all</button><button onclick="WriteAllBits(2)">Invert</button>
 	</td>
 	</tr>
 	</table>
 	
 <script>
-	function WriteAllBits(BitState) {
+	function WriteAllBits(State) {
 		let LoopCount = 0n
-		for (LoopCount = 0n; LoopCount < 8n; LoopCount++) {
-			document.getElementById("Bit" + LoopCount.toString(10)).checked = BitState
+		if (State < 2) {
+			for (LoopCount = 0n; LoopCount < 8n; LoopCount++) {
+				document.getElementById("Bit" + LoopCount.toString(10)).checked = State
+			}
+		} else {
+			for (LoopCount = 0n; LoopCount < 8n; LoopCount++) {
+				let Element = document.getElementById("Bit" + LoopCount.toString(10))
+				Element.checked = !Element.checked
+			}
 		}
 		CheckBoxInput()
 	}
@@ -104,7 +111,7 @@
 		try {
 			BinaryNumber = BigintClamp(BigInt("0b" + document.getElementById("BinaryInput").value), 0n, 255n)
 		} catch {}
-		document.getElementById("BinaryInput").value = BinaryNumber.toString(2)
+		document.getElementById("BinaryInput").value = BinaryNumber.toString(2).padStart(8, "0")
 		document.getElementById("HexInput").value = BinaryNumber.toString(16).padStart(2, "0").toUpperCase()
 		CheckBoxOutput()
 	}
@@ -137,12 +144,24 @@
 		document.getElementById("BinaryInput").value = OutputString.padStart(8, "0")
 		document.getElementById("HexInput").value = BigInt("0b" + OutputString).toString(16).padStart(2, "0").toUpperCase()
 	}
-	function IncrementDecrementHex() {
+	function IncrementDecrementAnyRadix() {
 		let ElementUsed = event.target
 		let KeyPressed = event.key
+		let RadixPrefix = ElementUsed.dataset.radixprefix
+		
+		let Radix = 10
+		let PadLength = 0
+		if (RadixPrefix.toUpperCase() == "0X") {
+			Radix = 16
+			PadLength = 2
+		} else if (RadixPrefix.toUpperCase() == "0B") {
+			Radix = 2
+			PadLength = 8
+		}
+		
 		let Value = 0n
 		try {
-			Value = BigInt("0x" + ElementUsed.value)
+			Value = BigInt(RadixPrefix + ElementUsed.value)
 		} catch {}
 		if (!/(?:ArrowUp|ArrowDown)/.test(KeyPressed)) {
 			return
@@ -153,8 +172,8 @@
 		} else {
 			Value--
 		}
-		ElementUsed.value = Value.toString(16).padStart(6, "0").toUpperCase()
-		EnteredHex()
+		ElementUsed.value = Value.toString(Radix).padStart(PadLength, "0").toUpperCase()
+		ElementUsed.onchange()
 	}
 	function BigintClamp(num, min, max) {
 		//Restrict a number within a specified range, bigInt edition.
