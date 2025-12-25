@@ -122,7 +122,7 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 					</li>
 					<li>
 						<kbd>CustomBlocks/routines/MBCM16SearchBlockFlagIndex.asm</kbd>, this is a routine that searches for what index matches with the block being touched (times 2 and on accumulator), to determine what flag the block to set/reset so it doesn't respawn on level (re)load. If not found,
-						it returns a value of <kbd>$FFFE</kbd> if not found.
+						it returns a value of <kbd>$FFFE</kbd> if not found (and does nothing).
 					</li>
 					<li>
 						<kbd>CustomBlocks/routines/MBCM16GetWhatKeyCounter.asm</kbd>, blocks' routine to find what key counter to use (this system supports separate key counters, akin to most <i>Zelda</i> games since <i>A Link to the Past</i> that you cannot use a small key
@@ -138,7 +138,7 @@ EDIT: This is now fixed on version 3.11 (released on 2020/02/09)</p>
 				can play around with. Also, this assumes you are using the super status bar patch, if you are not using that and/or using other patches, adjust the defines under &ldquo;<kbd>HUD stuff</kbd>&rdquo;.<br><br>
 				
 				Once you're done, have the <b>folder containing them</b>, <kbd>MBCM16Defines</kbd> be copied and pasted in GPS and Uberasm tool's folder, in the same directory as their <kbd>.exe</kbd> programs are at. If you later make changes in the defines,
-				they must be replaced to include the up-to-date information.</li>
+				all copies of it must be updated to work properly.</li>
 			</li>
 		</ol>
 	</li>

@@ -66,7 +66,13 @@
 <table>
 	<tr>
 		<td><kbd>!Freeram_MBCM16_MemoryFlag</kbd> address:</td>
-		<td>$<input type="text" value="7FAD49" id="Input_Freeram_MemoryFlagRAM" onkeydown="IncrementDecrementHex();" onchange="CorrectHexInput(); Calculate(); CalculateFlagNumber()" data-min="0x0" data-max="0xFFFFFF" data-padlength="6"></td>
+		<td>
+			$<input type="text" value="7FAD49" id="Input_Freeram_MemoryFlagRAM" onkeydown="IncrementDecrementHex();" onchange="CorrectHexInput(); Calculate(); CalculateFlagNumber()" data-min="0x0" data-max="0xFFFFFF" data-padlength="6" list="AutoInput_Freeram_MemoryFlagRAM">
+			<datalist id="AutoInput_Freeram_MemoryFlagRAM">
+				<option value="7FAD49">Default LoROM</option>
+				<option value="4001B9">Default SA-1</option>
+			</datalist>
+		</td>
 	</tr>
 	<tr>
 		<td>Number of group-128s</td>
@@ -74,7 +80,13 @@
 	</tr>
 	<tr>
 		<td><kbd>!Freeram_MBCM16_KeyCounter</kbd> address:</td>
-		<td>$<input type="text" value="7FAD79" id="Input_Freeram_KeyCounter" onkeydown="IncrementDecrementHex()" onchange="CorrectHexInput(); Calculate()" data-min="0x0" data-max="0xFFFFFF" data-padlength="6"></td>
+		<td>
+			$<input type="text" value="7FAD79" id="Input_Freeram_KeyCounter" onkeydown="IncrementDecrementHex()" onchange="CorrectHexInput(); Calculate()" data-min="0x0" data-max="0xFFFFFF" data-padlength="6" list="AutoInput_Freeram_KeyCounter">
+			<datalist id="AutoInput_Freeram_KeyCounter">
+				<option value="7FAD79">Default LoROM</option>
+				<option value="4001E9">Default SA-1</option>
+			</datalist>
+		</td>
 	</tr>
 	<tr>
 		<td>Number of separate key counters</td>
@@ -157,6 +169,9 @@ item, else you would have to move the comments (starting from the area that you'
 		try {
 			Value = BigInt("0x" + ElementUsed.value)
 		} catch {}
+		if (event.altKey) {
+			return
+		}
 		if (!/(?:ArrowUp|ArrowDown)/.test(KeyPressed)) {
 			return
 		}
