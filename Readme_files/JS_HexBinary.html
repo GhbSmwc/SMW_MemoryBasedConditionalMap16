@@ -170,6 +170,9 @@
 		try {
 			Value = BigInt(RadixPrefix + ElementUsed.value)
 		} catch {}
+		if (event.altKey) {
+			return
+		}
 		if (!/(?:ArrowUp|ArrowDown)/.test(KeyPressed)) {
 			return
 		}
